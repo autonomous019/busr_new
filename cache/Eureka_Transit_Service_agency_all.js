@@ -1,0 +1,1 @@
+{"agency_id":"2","agency_name":"Eureka Transit Service","agency_url":"http://www.eurekatransit.org/","agency_timezone":"America/Los_Angeles","agency_phone":"(707) 443-0826","agency_fare_url":"","agency_lang":"en"}

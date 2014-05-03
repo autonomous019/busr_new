@@ -1,0 +1,1 @@
+"*3\r\n$5\r\nHMSET\r\n$22\r\nRedwood_Transit_System\r\n$174\r\nagency_id 1 agency_name Redwood_Transit_System agency_url www.redwoodtransit.org agency_timezone AmericaLos_Angeles agency_phone 707_443-0826 agency_fare_url  agency_lang en \r\n"

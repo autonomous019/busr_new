@@ -1,0 +1,1 @@
+{"agency_id":"3","agency_name":"Arcata & Mad River Transit System","agency_url":"http://www.arcatatransit.org/","agency_timezone":"America/Los_Angeles","agency_phone":"(707) 822-3775","agency_fare_url":"","agency_lang":"en"}

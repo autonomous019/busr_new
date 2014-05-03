@@ -1,0 +1,7 @@
+var stop  = {"id":"MTA_202051","lon":"-74.184906","lat":"40.595154","direction":"SW","name":"VICTORY BL/CANNON AV","code":"202051","routes":"MTA%20NYCT_S62 MTA%20NYCT_S92 MTA%20NYCT_X11 "}
+        
+        exports.getStop = function() {
+	          return stop;
+        }
+        
+        

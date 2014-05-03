@@ -1,0 +1,30 @@
+<p>&nbsp;</p>
+{{agent.0.agency_name}}
+ 
+
+{{#each agent}}
+<h2>{{agency_name}} </h2>
+
+  {{agency_url}}<br/>
+  {{agency_timezone}}<br/>
+  {{agency_phone}}<br/>
+  {{agency_fare_url}}<br/>
+  
+{{/each}}
+
+
+
+<h3>Agency Routes</h3>
+
+
+{{#each agent_routes}}
+<p><a href="/route_stops/{{route_agency_id}}/{{route_id}}">{{route_short_name}} : {{route_long_name}} </a></p>
+
+  
+  
+{{/each}}
+
+
+
+
+
