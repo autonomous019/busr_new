@@ -211,5 +211,39 @@ michael-mccarrons-MacBook-Pro:TransitProfiler michaelmccarron$ redis-cli LINDEX 
 "{\"stop_id\"=>\"796\", \"stop_name\"=>\"4th at Simmons [wb]\", \"stop_lat\"=>\"47.044563\", \"stop_lon\"=>\"-122.907219\", \"stop_code\"=>\"\", \"stop_desc\"=>\"\", \"stop_zone_id\"=>\"\", \"stop_url\"=>\"\", \"stop_location_type\"=>\"\", \"stop_parent_station\"=>\"\", \"stop_timezone\"=>\"\", \"stop_wheelchair_boarding\"=>\"\"}"
 michael-mccarrons-MacBook-Pro:TransitProfiler michaelmccarron$ 
 
+Failed to add file TransitProfiler/routing/ to index.
+
+
+
+SCHEDULE STUFF
+Outbound
+{"trip_id"=>"959", "stop_id"=>"167", "arrival_time"=>"20:15:00", "departure_time"=>"20:15:00", "stop_sequence"=>"0", "shape_dist_traveled"=>"0.0", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"959", "stop_id"=>"269", "arrival_time"=>"20:18:44", "departure_time"=>"20:18:44", "stop_sequence"=>"3", "shape_dist_traveled"=>"1.4936880899", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"959", "stop_id"=>"270", "arrival_time"=>"20:19:13", "departure_time"=>"20:19:13", "stop_sequence"=>"4", "shape_dist_traveled"=>"1.66270965378", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"959", "stop_id"=>"271", "arrival_time"=>"20:19:38", "departure_time"=>"20:19:38", "stop_sequence"=>"5", "shape_dist_traveled"=>"1.80476357243", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"959", "stop_id"=>"272", "arrival_time"=>"20:20:08", "departure_time"=>"20:20:08", "stop_sequence"=>"6", "shape_dist_traveled"=>"1.98115009816", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"959", "stop_id"=>"323", "arrival_time"=>"20:28:00", "departure_time"=>"20:28:00", "stop_sequence"=>"12", "shape_dist_traveled"=>"4.7427501443", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"959", "stop_id"=>"325", "arrival_time"=>"20:23:10", "departure_time"=>"20:23:10", "stop_sequence"=>"9", "shape_dist_traveled"=>"2.88651666657", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"959", "stop_id"=>"326", "arrival_time"=>"20:24:16", "departure_time"=>"20:24:16", "stop_sequence"=>"10", "shape_dist_traveled"=>"3.19717741241", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"959", "stop_id"=>"327", "arrival_time"=>"20:25:18", "departure_time"=>"20:25:18", "stop_sequence"=>"11", "shape_dist_traveled"=>"3.58519203685", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"959", "stop_id"=>"411", "arrival_time"=>"20:21:00", "departure_time"=>"20:21:00", "stop_sequence"=>"7", "shape_dist_traveled"=>"2.27640285073", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"959", "stop_id"=>"412", "arrival_time"=>"20:22:05", "departure_time"=>"20:22:05", "stop_sequence"=>"8", "shape_dist_traveled"=>"2.5809921569", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"959", "stop_id"=>"796", "arrival_time"=>"20:16:40", "departure_time"=>"20:16:40", "stop_sequence"=>"2", "shape_dist_traveled"=>"0.676571114089", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"959", "stop_id"=>"797", "arrival_time"=>"20:15:38", "departure_time"=>"20:15:38", "stop_sequence"=>"1", "shape_dist_traveled"=>"0.254199200535", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+
+Inbound
+{"trip_id"=>"960", "stop_id"=>"167", "arrival_time"=>"19:40:00", "departure_time"=>"19:40:00", "stop_sequence"=>"11", "shape_dist_traveled"=>"3.51739790107", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"960", "stop_id"=>"323", "arrival_time"=>"19:28:00", "departure_time"=>"19:28:00", "stop_sequence"=>"0", "shape_dist_traveled"=>"0.0", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"960", "stop_id"=>"261", "arrival_time"=>"19:31:00", "departure_time"=>"19:31:00", "stop_sequence"=>"4", "shape_dist_traveled"=>"1.26139857459", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"960", "stop_id"=>"262", "arrival_time"=>"19:31:48", "departure_time"=>"19:31:48", "stop_sequence"=>"5", "shape_dist_traveled"=>"1.4396781788", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"960", "stop_id"=>"263", "arrival_time"=>"19:33:14", "departure_time"=>"19:33:14", "stop_sequence"=>"6", "shape_dist_traveled"=>"1.75225907171", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"960", "stop_id"=>"264", "arrival_time"=>"19:34:24", "departure_time"=>"19:34:24", "stop_sequence"=>"7", "shape_dist_traveled"=>"2.00984617941", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"960", "stop_id"=>"324", "arrival_time"=>"19:28:53", "departure_time"=>"19:28:53", "stop_sequence"=>"1", "shape_dist_traveled"=>"0.446844465933", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"960", "stop_id"=>"386", "arrival_time"=>"19:29:16", "departure_time"=>"19:29:16", "stop_sequence"=>"2", "shape_dist_traveled"=>"0.646577112312", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"960", "stop_id"=>"387", "arrival_time"=>"19:30:12", "departure_time"=>"19:30:12", "stop_sequence"=>"3", "shape_dist_traveled"=>"0.981689180126", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"960", "stop_id"=>"798", "arrival_time"=>"19:37:36", "departure_time"=>"19:37:36", "stop_sequence"=>"8", "shape_dist_traveled"=>"2.81354924904", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"960", "stop_id"=>"868", "arrival_time"=>"19:39:23", "departure_time"=>"19:39:23", "stop_sequence"=>"10", "shape_dist_traveled"=>"3.28412000643", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+{"trip_id"=>"960", "stop_id"=>"941", "arrival_time"=>"19:38:09", "departure_time"=>"19:38:09", "stop_sequence"=>"9", "shape_dist_traveled"=>"2.93357224447", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+
 
 

@@ -31,7 +31,7 @@ class Aggregator
   end 
   
   
-  ########### system_map_size() #################################################### 
+  ########### system_map_size() ########################################### 
   #create a list of agents in the system
   def system_map_size()  
 
@@ -113,6 +113,50 @@ class Aggregator
   
   
   
+  ########### route_schedule() #################################################### 
+  #gets all times for a route atomized by stop id 
+ 
+  def route_schedule(route_id)
+      times = Array.new
+      temp_times = Array.new
+      trips = Array.new
+      stop_ids = Array.new  
+      
+      #get trips for a route
+      trips = @redis.smembers(@agency_name+"_trips_"+route_id.to_s)
+      trips.each do |t|  
+        #t is the trip_id    
+        #redis-cli smembers 'Intercity_Transit_stop_times_380' gives set of stop_ids for a trip
+        stop_ids.push(@redis.smembers(@agency_name+"_stop_times_"+t))
+        
+      end
+
+      trips.each do |tid|
+        stop_ids.each do |sid|
+          sid.each do |s|
+              #puts @agency_name+":stop_times_"+tid.to_s+"_"+s.to_s
+              times.push(@redis.hgetall(@agency_name+":stop_times_"+tid.to_s+"_"+s.to_s))
+              
+            end 
+          end
+        end
+        
+        
+        times.each do |time|
+          temp_times.push(time)
+        end 
+        temp_times = times.uniq 
+        temp_times.each do |c|
+          #puts c['trip_id'].to_s+" "+c['stop_id'].to_s
+         @redis.rpush @agency_name+":route_schedule_"+route_id.to_s, c['trip_id'].to_s+" "+c['stop_id'].to_s
+        end
+        
+        
+      return temp_times
+  end
+  
+  
+  
   ########### system_map() #################################################### 
   
  
@@ -179,6 +223,12 @@ ARGV.each do |argv|
   routes = redis.smembers(argv+'_routes') 
   system_coords = Array.new
 
+
+
+  
+ 
+  
+############################################################################## 
   # generate stops for routes
   puts
   puts "Generating Stops Graph into Redis for Agency: "+argv
@@ -190,6 +240,7 @@ ARGV.each do |argv|
   end
   puts "Total Number of Routes for "+argv+": "+routes_cnt.to_s
   
+############################################################################## 
   puts
   puts "Generating Atomized Route Map Coordinates Graph into Redis for Agency: "+argv
   routes.each do |r|
@@ -198,6 +249,7 @@ ARGV.each do |argv|
     puts "Route: "+ r+" MAPS LEN "+agg_routes.length.to_s
   end
   
+############################################################################## 
   puts
   puts "Generating System Map Coordinates Graph into Redis for Agency: "+argv
   routes.each do |r|
@@ -205,8 +257,6 @@ ARGV.each do |argv|
     puts argv+": "+ r+" System Map LEN "+agg_system_map.length.to_s
     system_coords.push(agg_system_map)
   end
-  
-  
   
   sys_map_length = agg.system_map_size()
   
@@ -217,6 +267,26 @@ ARGV.each do |argv|
   end
   
   puts "Total Coordinates in System: "+sys_map_length.to_s
+
+
+############################################################################## 
+  puts
+  puts "Generating Route Schedules Set into Redis for Agency: "+argv
+  routes.each do |r|
+    schedule = agg.route_schedule(r)
+    puts argv+": "+ r+" route sched len " + schedule.length.to_s
+    schedule.each do |sched|
+      #puts sched
+    end
+  
+    cnt = 0
+     while cnt < schedule.length.to_i  do
+       puts redis.lindex(argv+":route_schedule_"+r, cnt)
+        cnt += 1
+    end
+    
+  end
+############################################################################## 
 
   
 end
