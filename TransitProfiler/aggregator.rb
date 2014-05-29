@@ -128,31 +128,28 @@ class Aggregator
         #t is the trip_id    
         #redis-cli smembers 'Intercity_Transit_stop_times_380' gives set of stop_ids for a trip
         stop_ids.push(@redis.smembers(@agency_name+"_stop_times_"+t))
+        stops = @redis.smembers(@agency_name+"_stop_times_"+t)
+        #puts 
         
+        stops.each do |s|
+            #puts @redis.hgetall(@agency_name+":stop_times_"+t.to_s+"_"+s.to_s)
+            stop_times = @redis.hgetall(@agency_name+":stop_times_"+t.to_s+"_"+s.to_s)
+            temp_times.push(stop_times)
+            
+        end
+        
+        #puts "_____________________"
       end
-
-      trips.each do |tid|
-        stop_ids.each do |sid|
-          sid.each do |s|
-              #puts @agency_name+":stop_times_"+tid.to_s+"_"+s.to_s
-              times.push(@redis.hgetall(@agency_name+":stop_times_"+tid.to_s+"_"+s.to_s))
-              
-            end 
-          end
+      #puts temp_times.length
+      temp_times.each do |c|
+      #{"trip_id"=>"726", "stop_id"=>"167", "arrival_time"=>"18:40:00", "departure_time"=>"18:40:00", "stop_sequence"=>"11", "shape_dist_traveled"=>"3.51739790107", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+          #puts c['trip_id'].to_s+" "+c['stop_id'].to_s+" "+c['arrival_time'].to_s+" "+c['stop_sequence'].to_s+" "+c['shape_dist_traveled']
+          data = c['trip_id'].to_s+" "+c['stop_id'].to_s+" "+c['arrival_time'].to_s+" "+c['stop_sequence'].to_s+" "+c['shape_dist_traveled']
+          @redis.rpush @agency_name+":route_schedule_"+route_id.to_s, data
         end
-        
-        
-        times.each do |time|
-          temp_times.push(time)
-        end 
-        temp_times = times.uniq 
-        temp_times.each do |c|
-          #puts c['trip_id'].to_s+" "+c['stop_id'].to_s
-         @redis.rpush @agency_name+":route_schedule_"+route_id.to_s, c['trip_id'].to_s+" "+c['stop_id'].to_s
-        end
-        
-        
-      return temp_times
+    
+  
+     return temp_times
   end
   
   
@@ -224,7 +221,8 @@ ARGV.each do |argv|
   system_coords = Array.new
 
 
-
+#agg.route_schedule(33)
+#exit
   
  
   
@@ -272,18 +270,23 @@ ARGV.each do |argv|
 ############################################################################## 
   puts
   puts "Generating Route Schedules Set into Redis for Agency: "+argv
+  
   routes.each do |r|
     schedule = agg.route_schedule(r)
     puts argv+": "+ r+" route sched len " + schedule.length.to_s
-    schedule.each do |sched|
-      #puts sched
-    end
+    
+    
+    
+    
+    #schedule.each do |sched|
+    #  puts sched
+    #end
   
-    cnt = 0
-     while cnt < schedule.length.to_i  do
-       puts redis.lindex(argv+":route_schedule_"+r, cnt)
-        cnt += 1
-    end
+    #cnt = 0
+    # while cnt < schedule.length.to_i  do
+    #   puts redis.lindex(argv+":route_schedule_"+r, cnt)
+    #    cnt += 1
+    #end
     
   end
 ############################################################################## 
