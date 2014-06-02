@@ -12,6 +12,10 @@ var my_route_arr = new Array();
 var route_maps =  new Array();
 var shape_keys =  new Array();
 
+var my_schedule_arr = new Array();
+var schedules =  new Array();
+
+
 //STOPS
 exports.setStops = function(route_id, agency_name) {
 	
@@ -162,12 +166,87 @@ exports.setRouteMap = function(route_id, agency_name) {
     
 
 };
+
+
 exports.getRouteMap = function(route_id, agency_name) {
 	this.setRouteMap(route_id, agency_name);
 	
 	return route_maps;
 
 };
+
+
+
+
+//Schedules
+exports.setSchedules = function(route_id, agency_name) {
+	//need to get route schedule lengths then iterate through lindexes per length
+	
+    if(schedules.length >= 1){
+    	 schedules.length = 0;
+    }
+
+
+	//redis.set(argv+":route_schedule_length_"+r.to_s, schedule.length.to_s)
+	
+	client.get(agency_name+':route_schedule_length_'+route_id, function(err,sched_len){
+	     console.log("sched len:" + sched_len);
+		 schedule_len = sched_len;	
+		 
+		 
+	  	for(var c = 0; c < schedule_len; c++ ){
+			
+	  	    client.lindex(agency_name+':route_schedule_'+route_id, c, function(err, sched) {
+
+	
+	  		   if (err) {
+       
+	  		  		my_route_arr += [{"route_map_id":"404: error, no data"}];
+
+	  		      } else {
+		  
+	  			  	   
+						  
+	  					  var route_params = sched.split(" ");
+
+		  				  schedules.push(route_params);
+
+		  				  if(c === schedules.length){
+				 
+		  					 console.log(schedules);
+		  					 return schedules;
+							 
+		  				  } 
+
+		  			    
+	
+	  		  }
+	  		});	
+	
+	
+	
+	  	}
+		  
+		 
+		 
+		 
+		 
+		 
+	});
+	
+	
+	
+}
+
+
+exports.getSchedules = function(route_id, agency_name) {
+	this.setSchedules(route_id, agency_name);
+	
+	return schedules;
+
+};
+
+
 
 
 //redis-cli smembers 'Intercity_Transit_route_shapes_8'

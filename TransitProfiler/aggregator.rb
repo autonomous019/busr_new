@@ -274,10 +274,8 @@ ARGV.each do |argv|
   routes.each do |r|
     schedule = agg.route_schedule(r)
     puts argv+": "+ r+" route sched len " + schedule.length.to_s
-    
-    
-    
-    
+    redis.set(argv+":route_schedule_length_"+r.to_s, schedule.length.to_s)
+  
     #schedule.each do |sched|
     #  puts sched
     #end
