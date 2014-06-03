@@ -186,56 +186,53 @@ exports.setSchedules = function(route_id, agency_name) {
     	 schedules.length = 0;
     }
 
-
-	//redis.set(argv+":route_schedule_length_"+r.to_s, schedule.length.to_s)
-	
 	client.get(agency_name+':route_schedule_length_'+route_id, function(err,sched_len){
 	     console.log("sched len:" + sched_len);
 		 schedule_len = sched_len;	
-		 
 		 
 	  	for(var c = 0; c < schedule_len; c++ ){
 			
 	  	    client.lindex(agency_name+':route_schedule_'+route_id, c, function(err, sched) {
 
-	
 	  		   if (err) {
        
 	  		  		my_route_arr += [{"route_map_id":"404: error, no data"}];
 
 	  		      } else {
-		  
-	  			  	   
-						  
+		                
 	  					  var route_params = sched.split(" ");
-
+						  //console.log(route_params);
 		  				  schedules.push(route_params);
+						  trip_id = route_params[0];
+						  stop_id = route_params[1];
+						  days = route_params[5];
+						  
+						  var k = 0;
+						 
+	  			  		  client.hgetall(agency_name+":stop_times_"+trip_id+"_"+stop_id, function(err, results) {
+		
+	  			  		     if (err) {
+	          
+	  			  		  		my_schedule_arr += [{"agency_id":"404: error, no data", "agency_url":"sorry, temporary error"}];
 
-		  				  if(c === schedules.length){
-				 
-		  					 console.log(schedules);
-		  					 return schedules;
-							 
-		  				  } 
+	  			  		      } else {
+								  results['days'] = days;
+	  			  				 my_schedule_arr = results;
+	  			  				 schedules.push(my_schedule_arr);
+			 
+	  			  				 if(k === schedules.length){
+						 
+	  			  					 console.log(schedules);
+	  			  					 return schedules;
+	  			  				 } 
 
-		  			    
-	
+	  			  		      }
+	  			  			  k++;
+	  			  		});
 	  		  }
 	  		});	
-	
-	
-	
 	  	}
-		  
-		 
-		 
-		 
-		 
-		 
 	});
-	
-	
-	
 }
 
 
@@ -247,6 +244,3 @@ exports.getSchedules = function(route_id, agency_name) {
 };
 
 
-
-
-//redis-cli smembers 'Intercity_Transit_route_shapes_8'

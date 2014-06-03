@@ -1,4 +1,8 @@
 <h3>Route: {{route_id}}</h3>
+
+
+
+
  {{!-- stops.length --}}
  
 {{!-- route_map.length --}}
@@ -59,32 +63,33 @@
  </style>
  
 <div id="latlng"></div>
-<div id='map'></div>
+<div id="map"></div>
 	
+  {{#each schedules}}
+
+      {{trip_id}} {{days}}  
+  {{/each}}
+
   
- 
-        <script type="text/javascript">
-		/*
-{
-    "type": "MultiLineString", 
-    "coordinates": [
-        [[10, 10], [20, 20], [10, 40]], 
-        [[40, 40], [30, 30], [40, 20], [30, 10]]
-    ]
-}
-{ shape_id: '8',
-    shape_pt_sequence: '46',
-    shape_dist_traveled: '3.66486260083',
-    shape_pt_lat: '47.03043',
-    shape_pt_lon: '-122.91581' },
-		*/
+  
+  <script type="text/javascript">
+  var sched = new Array();
+  {{#each schedules}}
+	    sched.push(' {{trip_id}} {{stop_id}}  ');
+  {{/each}}
+  var sched_len = sched.length;
+  alert(sched_len);
+  </script>
+  
+  
+  
+<script type="text/javascript">
+
 	var latlngs = new Array();
 		
 	{{#each route_map}}
-		    latlngs.push(new L.LatLng( {{shape_pt_lat}}, {{shape_pt_lon}} ));
-		    
-		
-		{{/each}}
+		 latlngs.push(new L.LatLng( {{shape_pt_lat}},{{shape_pt_lon}} ));
+	{{/each}}
 		
 		      var stops = [
 	              {{#each stops}}
@@ -214,27 +219,4 @@
    <br /><br />
     <br /><br />
 
- <!-- 
- {{#each stops}}
-     
-    SID: {{stop_id}}<br />
-	Stop Name: {{stop_name}} <br />
-	Lat: {{stop_lat}} <br />
-	Lon: {{stop_lon}} <br />
-	Code: {{stop_code}} <br />
-	Desc: {{stop_desc}} <br />
-	Zone: {{stop_zone_id}} <br />
-	URL: {{stop_url}} <br />
-	Loc Type: {{stop_location_type}} <br />
-	Parent Station: {{stop_parent_station}} <br />
-	Timezone: {{stop_timezone}} <br />
-	Wheelchair: {{stop_wheelchair_boarding}} <br />
-	<hr>
-	
- {{/each}}
- 
 
-
--->
-
-{{log stops}}

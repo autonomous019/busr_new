@@ -144,13 +144,78 @@ class Aggregator
       temp_times.each do |c|
       #{"trip_id"=>"726", "stop_id"=>"167", "arrival_time"=>"18:40:00", "departure_time"=>"18:40:00", "stop_sequence"=>"11", "shape_dist_traveled"=>"3.51739790107", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
           #puts c['trip_id'].to_s+" "+c['stop_id'].to_s+" "+c['arrival_time'].to_s+" "+c['stop_sequence'].to_s+" "+c['shape_dist_traveled']
-          data = c['trip_id'].to_s+" "+c['stop_id'].to_s+" "+c['arrival_time'].to_s+" "+c['stop_sequence'].to_s+" "+c['shape_dist_traveled']
+          
+          #get the service id from the trip_id and add what day(s) the trip runs, then add to data
+          trip_data = @redis.hgetall(@agency_name+":trip_"+c['trip_id'])
+          #puts trip_data
+          service_id = trip_data['service_id']
+          calendar_data = @redis.hgetall(@agency_name+":calendar_"+service_id)
+          #puts calendar_data['sunday']
+          days = calendar_days(calendar_data)
+          #{"service_id"=>"3", "monday"=>"0", "tuesday"=>"0", "wednesday"=>"0", "thursday"=>"0", "friday"=>"0", "saturday"=>"0", "sunday"=>"1", "start_date"=>"20131230", "end_date"=>"20181230"}
+          #puts days
+     
+          
+          data = c['trip_id'].to_s+" "+c['stop_id'].to_s+" "+c['arrival_time'].to_s+" "+c['stop_sequence'].to_s+" "+c['shape_dist_traveled']+" "+days
           @redis.rpush @agency_name+":route_schedule_"+route_id.to_s, data
         end
     
   
      return temp_times
   end
+  
+  
+########### calendar_days() #################################################### 
+  def calendar_days(calendar_data)
+    
+    if(calendar_data['monday'] === '1')
+      monday = "M"
+    else
+      monday = ""
+    end
+    
+    if(calendar_data['tuesday'] === '1')
+      tuesday = "Tu"
+    else
+      tuesday = ""
+    end
+    
+    if(calendar_data['wednesday'] === '1')
+      wednesday = "W"
+    else
+      wednesday = ""
+    end
+    
+    if(calendar_data['thursday'] === '1')
+      thursday = "Th"
+    else
+      thursday = ""
+    end
+    
+    if(calendar_data['friday'] === '1')
+      friday = "F"
+    else
+      friday = ""
+    end
+    
+    if(calendar_data['saturday'] === '1')
+      saturday = "Sa"
+    else
+      saturday = ""
+    end
+    
+    if(calendar_data['sunday'] === '1')
+      sunday = "Su"
+    else
+      sunday = ""
+    end
+    
+    days = monday+","+tuesday+","+wednesday+","+thursday+","+friday+","+saturday+","+sunday
+    
+    return days 
+    
+  end
+  
   
   
   
