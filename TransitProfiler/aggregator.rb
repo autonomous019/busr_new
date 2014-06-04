@@ -149,14 +149,16 @@ class Aggregator
           trip_data = @redis.hgetall(@agency_name+":trip_"+c['trip_id'])
           #puts trip_data
           service_id = trip_data['service_id']
+          puts service_id
           calendar_data = @redis.hgetall(@agency_name+":calendar_"+service_id)
-          #puts calendar_data['sunday']
+          #puts calendar_data
           days = calendar_days(calendar_data)
           #{"service_id"=>"3", "monday"=>"0", "tuesday"=>"0", "wednesday"=>"0", "thursday"=>"0", "friday"=>"0", "saturday"=>"0", "sunday"=>"1", "start_date"=>"20131230", "end_date"=>"20181230"}
           #puts days
      
           
           data = c['trip_id'].to_s+" "+c['stop_id'].to_s+" "+c['arrival_time'].to_s+" "+c['stop_sequence'].to_s+" "+c['shape_dist_traveled']+" "+days
+          #puts data
           @redis.rpush @agency_name+":route_schedule_"+route_id.to_s, data
         end
     
@@ -286,7 +288,7 @@ ARGV.each do |argv|
   system_coords = Array.new
 
 
-#agg.route_schedule(33)
+#agg.route_schedule(2)
 #exit
   
  

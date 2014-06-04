@@ -185,13 +185,13 @@ exports.setSchedules = function(route_id, agency_name) {
     if(schedules.length >= 1){
     	 schedules.length = 0;
     }
-
+    var cnt = 0;
 	client.get(agency_name+':route_schedule_length_'+route_id, function(err,sched_len){
 	     console.log("sched len:" + sched_len);
 		 schedule_len = sched_len;	
 		 
 	  	for(var c = 0; c < schedule_len; c++ ){
-			
+			 var k = 0;
 	  	    client.lindex(agency_name+':route_schedule_'+route_id, c, function(err, sched) {
 
 	  		   if (err) {
@@ -202,33 +202,33 @@ exports.setSchedules = function(route_id, agency_name) {
 		                
 	  					  var route_params = sched.split(" ");
 						  //console.log(route_params);
-		  				  schedules.push(route_params);
+		  				 
 						  trip_id = route_params[0];
 						  stop_id = route_params[1];
+						  arrival_time = route_params[2];
+						  sequencer = route_params[3];
+						  distance_from_head = route_params[4];
 						  days = route_params[5];
 						  
-						  var k = 0;
-						 
-	  			  		  client.hgetall(agency_name+":stop_times_"+trip_id+"_"+stop_id, function(err, results) {
-		
-	  			  		     if (err) {
-	          
-	  			  		  		my_schedule_arr += [{"agency_id":"404: error, no data", "agency_url":"sorry, temporary error"}];
-
-	  			  		      } else {
-								  results['days'] = days;
-	  			  				 my_schedule_arr = results;
-	  			  				 schedules.push(my_schedule_arr);
-			 
-	  			  				 if(k === schedules.length){
-						 
-	  			  					 console.log(schedules);
-	  			  					 return schedules;
-	  			  				 } 
-
-	  			  		      }
-	  			  			  k++;
-	  			  		});
+						  var data_arr = new Array();
+						  data_arr['trip_id'] = trip_id;
+						  data_arr['stop_id'] = stop_id;
+						  data_arr['arrival_time'] = arrival_time;
+						  data_arr['sequencer'] = sequencer;
+						  data_arr['distance_from_head'] = distance_from_head;
+						  data_arr['days'] = days;
+						  
+						  schedules.push(data_arr);
+						  //console.log(cnt);
+						  if(cnt === schedule_len-1){
+						  	console.log(schedules);
+							return schedules;
+						  }
+						  cnt++;
+						  
+						
+						
+						
 	  		  }
 	  		});	
 	  	}
