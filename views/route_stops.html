@@ -64,21 +64,39 @@
  
 <div id="latlng"></div>
 <div id="map"></div>
-	
-  {{#each schedules}}
-
-      {{trip_id}} {{stop_id}} {{arrival_time}} {{days}}  
-  {{/each}}
 
   
   
   <script type="text/javascript">
   var sched = new Array();
+  
+   /*
+  sched['trip_id'] = {{trip_id}};
+  sched['stop_id'] = {{stop_id}};
+  sched['arrival_time'] = {{arrival_time}};
+  sched['sequencer'] = {{sequencer}};
+  sched['distance_from_head'] = {{distance_from_head}};
+  sched['days'] = {{days}};
+ 
+ //sched.push(' {{trip_id}} {{stop_id}} {{arrival_time}} {{sequencer}} {{distance_from_head}} {{days}}');
+ */ 
+ 
+ 
   {{#each schedules}}
-	    sched.push(' {{trip_id}} {{stop_id}}  ');
+
+  sched.push({
+      trip_id: '{{trip_id}}',
+	  stop_id: '{{stop_id}}',
+	  arrival_time: '{{arrival_time}}',
+	  sequencer: '{{sequencer}}',
+	  distance_from_head: '{{distance_from_head}}',
+	  days: '{{days}}'
+  });
+  
+	    
   {{/each}}
   var sched_len = sched.length;
-  //alert(sched_len);
+  //alert(sched_len + sched[0] );
   </script>
   
   

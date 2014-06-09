@@ -201,8 +201,6 @@ exports.setSchedules = function(route_id, agency_name) {
 	  		      } else {
 		                
 	  					  var route_params = sched.split(" ");
-						  //console.log(route_params);
-		  				 
 						  trip_id = route_params[0];
 						  stop_id = route_params[1];
 						  arrival_time = route_params[2];
@@ -226,7 +224,8 @@ exports.setSchedules = function(route_id, agency_name) {
 						  }
 						  cnt++;
 						  
-						
+					      //TODO when adding atomized stop schedules use this:	  
+						  //@redis.SADD(@agency_name+"_stop_schedule_"+c['stop_id'], c['trip_id'].to_s+" "+c['arrival_time'].to_s+" "+c['departure_time'])
 						
 						
 	  		  }

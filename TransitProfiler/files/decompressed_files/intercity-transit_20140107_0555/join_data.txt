@@ -202,9 +202,6 @@ get Intercity_Transit_trips to get all trips for a route then get all stops from
 redis-cli SMEMBERS 'Intercity_Transit_trips_7’ gets all trips for a route as INT by trip_id
 
 
-
-
-
 michael-mccarrons-MacBook-Pro:TransitProfiler michaelmccarron$ redis-cli LINDEX 'Intercity_Transit_stops_to_route_7' 0
 "{\"stop_id\"=>\"797\", \"stop_name\"=>\"State at Columbia [wb]\", \"stop_lat\"=>\"47.045712\", \"stop_lon\"=>\"-122.902855\", \"stop_code\"=>\"\", \"stop_desc\"=>\"\", \"stop_zone_id\"=>\"\", \"stop_url\"=>\"\", \"stop_location_type\"=>\"\", \"stop_parent_station\"=>\"\", \"stop_timezone\"=>\"\", \"stop_wheelchair_boarding\"=>\"\"}"
 michael-mccarrons-MacBook-Pro:TransitProfiler michaelmccarron$ redis-cli LINDEX 'Intercity_Transit_stops_to_route_7' 1

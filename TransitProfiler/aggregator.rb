@@ -115,6 +115,15 @@ class Aggregator
   
   ########### route_schedule() #################################################### 
   #gets all times for a route atomized by stop id 
+  
+  # stop_times {"trip_id"=>"726", "stop_id"=>"167", "arrival_time"=>"18:40:00", "departure_time"=>"18:40:00", "stop_sequence"=>"11", "shape_dist_traveled"=>"3.51739790107", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
+          #puts c['trip_id'].to_s+" "+c['stop_id'].to_s+" "+c['arrival_time'].to_s+" "+c['stop_sequence'].to_s+" "+c['shape_dist_traveled']
+  
+  #   calendar hash     {"service_id"=>"3", "monday"=>"0", "tuesday"=>"0", "wednesday"=>"0", "thursday"=>"0", "friday"=>"0", "saturday"=>"0", "sunday"=>"1", "start_date"=>"20131230", "end_date"=>"20181230"}
+          #puts days   
+          
+  #   t is the trip_id    
+  #   redis-cli smembers 'Intercity_Transit_stop_times_380' gives set of stop_ids for a trip         
  
   def route_schedule(route_id)
       times = Array.new
@@ -125,43 +134,32 @@ class Aggregator
       #get trips for a route
       trips = @redis.smembers(@agency_name+"_trips_"+route_id.to_s)
       trips.each do |t|  
-        #t is the trip_id    
-        #redis-cli smembers 'Intercity_Transit_stop_times_380' gives set of stop_ids for a trip
         stop_ids.push(@redis.smembers(@agency_name+"_stop_times_"+t))
         stops = @redis.smembers(@agency_name+"_stop_times_"+t)
-        #puts 
-        
+      
         stops.each do |s|
-            #puts @redis.hgetall(@agency_name+":stop_times_"+t.to_s+"_"+s.to_s)
             stop_times = @redis.hgetall(@agency_name+":stop_times_"+t.to_s+"_"+s.to_s)
             temp_times.push(stop_times)
             
         end
-        
-        #puts "_____________________"
+
       end
-      #puts temp_times.length
+
       temp_times.each do |c|
-      #{"trip_id"=>"726", "stop_id"=>"167", "arrival_time"=>"18:40:00", "departure_time"=>"18:40:00", "stop_sequence"=>"11", "shape_dist_traveled"=>"3.51739790107", "stop_headsign"=>"", "pickup_type"=>"", "drop_off_type"=>""}
-          #puts c['trip_id'].to_s+" "+c['stop_id'].to_s+" "+c['arrival_time'].to_s+" "+c['stop_sequence'].to_s+" "+c['shape_dist_traveled']
-          
+     
           #get the service id from the trip_id and add what day(s) the trip runs, then add to data
           trip_data = @redis.hgetall(@agency_name+":trip_"+c['trip_id'])
-          #puts trip_data
           service_id = trip_data['service_id']
-          puts service_id
           calendar_data = @redis.hgetall(@agency_name+":calendar_"+service_id)
-          #puts calendar_data
           days = calendar_days(calendar_data)
-          #{"service_id"=>"3", "monday"=>"0", "tuesday"=>"0", "wednesday"=>"0", "thursday"=>"0", "friday"=>"0", "saturday"=>"0", "sunday"=>"1", "start_date"=>"20131230", "end_date"=>"20181230"}
-          #puts days
-     
-          
           data = c['trip_id'].to_s+" "+c['stop_id'].to_s+" "+c['arrival_time'].to_s+" "+c['stop_sequence'].to_s+" "+c['shape_dist_traveled']+" "+days
-          #puts data
           @redis.rpush @agency_name+":route_schedule_"+route_id.to_s, data
-        end
-    
+          @redis.SADD(@agency_name+"_stop_schedule_"+c['stop_id'], c['trip_id'].to_s+" "+c['arrival_time'].to_s+" "+c['departure_time'])
+          
+          #need a set of time data to stop_id from c['stop_id'] above 
+     end
+        #TODO there should be a set of schedules atomized to each stop. capture trip id and arrival/departure times, stop sequence, stop distance
+        # 
   
      return temp_times
   end
@@ -288,8 +286,8 @@ ARGV.each do |argv|
   system_coords = Array.new
 
 
-#agg.route_schedule(2)
-#exit
+agg.route_schedule(2)
+exit
   
  
   
