@@ -13,13 +13,14 @@ var agent_info = [ ];
 var agent = [ ];
 var routes = [ ];
 
-exports.getAgencies = function(req, res) {
+exports.getAgencies = function() {
     //if(agencies.length >= 1){
     //	return agencies;
     //}
     if(agencies.length >= 1){
     	 agencies.length = 0;
     }
+
     client.smembers('agencies', function(err, keys) {
 
     if (err) return console.log(err);
@@ -56,6 +57,7 @@ exports.getAgencies = function(req, res) {
  
 
  exports.getAgenciesStatic = function() {
+	 //this.getAgencies();
  	return agencies;
  }
 
