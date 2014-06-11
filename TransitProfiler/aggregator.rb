@@ -150,9 +150,11 @@ class Aggregator
           #get the service id from the trip_id and add what day(s) the trip runs, then add to data
           trip_data = @redis.hgetall(@agency_name+":trip_"+c['trip_id'])
           service_id = trip_data['service_id']
+          trip_headsign = trip_data['trip_headsign']
+          block_id = trip_data['block_id']
           calendar_data = @redis.hgetall(@agency_name+":calendar_"+service_id)
           days = calendar_days(calendar_data)
-          data = c['trip_id'].to_s+" "+c['stop_id'].to_s+" "+c['arrival_time'].to_s+" "+c['stop_sequence'].to_s+" "+c['shape_dist_traveled']+" "+days
+          data = c['trip_id'].to_s+" "+c['stop_id'].to_s+" "+c['arrival_time'].to_s+" "+c['stop_sequence'].to_s+" "+c['shape_dist_traveled'].to_s+" "+days+" "+trip_headsign+" "+block_id+" "+service_id
           @redis.rpush @agency_name+":route_schedule_"+route_id.to_s, data
           @redis.SADD(@agency_name+"_stop_schedule_"+c['stop_id'], c['trip_id'].to_s+" "+c['arrival_time'].to_s+" "+c['departure_time'])
           
@@ -285,9 +287,8 @@ ARGV.each do |argv|
   routes = redis.smembers(argv+'_routes') 
   system_coords = Array.new
 
-
-agg.route_schedule(2)
-exit
+#agg.route_schedule(2)
+#exit
   
  
   

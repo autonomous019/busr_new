@@ -5,7 +5,7 @@
 
  {{!-- stops.length --}}
  
-{{ route_map.length }}
+{{!--  route_map.length --}}
  
  <style>
  #map {
@@ -68,20 +68,26 @@
   
   
   <script type="text/javascript">
-  var sched = new Array();
+  //create arrays of information for further processing on client
   
-   /*
-  sched['trip_id'] = {{trip_id}};
-  sched['stop_id'] = {{stop_id}};
-  sched['arrival_time'] = {{arrival_time}};
-  sched['sequencer'] = {{sequencer}};
-  sched['distance_from_head'] = {{distance_from_head}};
-  sched['days'] = {{days}};
+  var sched = new Array();
+  var stop_info = new Array();
  
- //sched.push(' {{trip_id}} {{stop_id}} {{arrival_time}} {{sequencer}} {{distance_from_head}} {{days}}');
- */ 
- 
- 
+  //stops information
+   {{#each stops}}
+   
+   stop_info.push({
+      
+ 	  stop_id: '{{stop_id}}',
+ 	  stop_name: '{{stop_name}}',
+ 	  stop_lat: '{{stop_lat}}',
+ 	  stop_lon: '{{stop_lon}}'
+	  
+   });
+   
+   {{/each}}
+   
+  //route schedule information 
   {{#each schedules}}
 
   sched.push({
@@ -90,13 +96,14 @@
 	  arrival_time: '{{arrival_time}}',
 	  sequencer: '{{sequencer}}',
 	  distance_from_head: '{{distance_from_head}}',
-	  days: '{{days}}'
+	  days: '{{days}}',
+	  trip_headsign: '{{trip_headsign}}',
+	  block_id: '{{block_id}}'
   });
   
 	    
   {{/each}}
-  var sched_len = sched.length;
-  //alert(sched_len + sched[0] );
+
   </script>
   
   
@@ -245,9 +252,7 @@
 	
 	
 	function SortBySequencer(a, b){
-	  var aSeq = a.sequencer;
-	  var bSeq = b.sequencer; 
-	  //return ((aSeq < bSeq) ? -1 : ((aSeq > bSeq) ? 1 : 0));
+	  //integer sorting algo
 	  return a.sequencer-b.sequencer
 	}
 
@@ -256,22 +261,32 @@
 	var cnt = 0;
 	var trip_id_reference = sched[0].trip_id;
 	var temp_arr = new Array();
+	document.write("<h3>Comprehensive Route Schedule</h3>");
 	
 	$.each( sched, function( key, value ) {
 		//create temp array if trip_id[0] != trip_id[1] then reset temp array and start over
 		temp_arr.push(value);
-		
+		if(cnt === 0){
+			//document.write("<h4>Trip Headsign: "+sched[cnt].trip_headsign+"</h4>");
+		}
 		//need to show the headsign of the bus
 		if(trip_id_reference != value.trip_id){
 			//reset the array and reset trip_id_reference to next trip_id in sched array
 			trip_id_reference = sched[cnt].trip_id;
-			
+			document.write("<h4>Trip Headsign: "+sched[cnt].trip_headsign+"</h4>");
 			//sort the array by sequencer field
 			temp_arr.sort(SortBySequencer);
 			
 			//do all writing to screen here 
 			for(var i = 0; i<temp_arr.length-1; i++){
-				document.write( " trip: " + temp_arr[i].trip_id + " stop: " + temp_arr[i].stop_id + "   time: "+temp_arr[i].arrival_time +"    day(s):"+temp_arr[i].days +"    sequence:"+temp_arr[i].sequencer+"<br />" );
+				//get stop_name from stops array where sched.stop_id = stop_info.stop_id
+				for (var k = 0, len = stop_info.length; k < len; k++) {
+				  if (stop_info[k].stop_id == temp_arr[i].stop_id) {
+					  var stop_name = stop_info[k].stop_name;
+				  }
+				}
+				//data not in UI: temp_arr[i].sequencer, temp_arr[i].trip_id
+				document.write( temp_arr[i].arrival_time +"    |    "+ stop_name + "<small> (stop id #:"+temp_arr[i].stop_id+")</small>     |      day(s):"+temp_arr[i].days+"<br />" );
 				
 			}
 			

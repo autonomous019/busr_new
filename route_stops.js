@@ -186,6 +186,7 @@ exports.setSchedules = function(route_id, agency_name) {
     	 schedules.length = 0;
     }
     var cnt = 0;
+	
 	client.get(agency_name+':route_schedule_length_'+route_id, function(err,sched_len){
 	     console.log("sched len:" + sched_len);
 		 schedule_len = sched_len;	
@@ -207,6 +208,9 @@ exports.setSchedules = function(route_id, agency_name) {
 						  sequencer = route_params[3];
 						  distance_from_head = route_params[4];
 						  days = route_params[5];
+						  trip_headsign = route_params[6];
+						  block_id = route_params[7];
+						  service_id = route_params[8];
 						  
 						  var data_arr = new Array();
 						  data_arr['trip_id'] = trip_id;
@@ -215,9 +219,12 @@ exports.setSchedules = function(route_id, agency_name) {
 						  data_arr['sequencer'] = sequencer;
 						  data_arr['distance_from_head'] = distance_from_head;
 						  data_arr['days'] = days;
+ 					      data_arr['trip_headsign'] = trip_headsign;
+ 					      data_arr['block_id'] = block_id;
+ 					      data_arr['service_id'] = service_id;
 						  
 						  schedules.push(data_arr);
-						  //console.log(cnt);
+						  
 						  if(cnt === schedule_len-1){
 						  	console.log(schedules);
 							return schedules;
