@@ -232,4 +232,58 @@
    <br /><br />
     <br /><br />
 
+<div id="info_panel">
+	<script type="text/javascript">
+	/*
+	var myStringArray = sched;
+	var arrayLength = myStringArray.length;
+	for (var i = 0; i < arrayLength; i++) {
+	  
+	    document.write(myStringArray[i]);
+	}
+	*/
+	
+	
+	function SortBySequencer(a, b){
+	  var aSeq = a.sequencer;
+	  var bSeq = b.sequencer; 
+	  //return ((aSeq < bSeq) ? -1 : ((aSeq > bSeq) ? 1 : 0));
+	  return a.sequencer-b.sequencer
+	}
 
+	
+	
+	var cnt = 0;
+	var trip_id_reference = sched[0].trip_id;
+	var temp_arr = new Array();
+	
+	$.each( sched, function( key, value ) {
+		//create temp array if trip_id[0] != trip_id[1] then reset temp array and start over
+		temp_arr.push(value);
+		
+		//need to show the headsign of the bus
+		if(trip_id_reference != value.trip_id){
+			//reset the array and reset trip_id_reference to next trip_id in sched array
+			trip_id_reference = sched[cnt].trip_id;
+			
+			//sort the array by sequencer field
+			temp_arr.sort(SortBySequencer);
+			
+			//do all writing to screen here 
+			for(var i = 0; i<temp_arr.length-1; i++){
+				document.write( " trip: " + temp_arr[i].trip_id + " stop: " + temp_arr[i].stop_id + "   time: "+temp_arr[i].arrival_time +"    day(s):"+temp_arr[i].days +"    sequence:"+temp_arr[i].sequencer+"<br />" );
+				
+			}
+			
+			document.write("<hr>")
+			temp_arr = []
+		}
+
+	  cnt++;
+	});
+	</script>
+	
+	
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
