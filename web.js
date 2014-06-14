@@ -108,7 +108,7 @@ app.get('/route_stops/:agency_name/:route_id', function(req, res) {
 	res.render('route_stops',{title:"Route: "+agency_name+" Route: "+route_id, route_id: route_id, agency_name:agency_name, 
 	stops:routeStopsEngine.getStops(route_id, agency_name), 
 	route_map:routeStopsEngine.getRouteMap(route_id, agency_name), 
-	realbus: routeStopsEngine.getRealBus(),
+	realbus: routeStopsEngine.getRealBus(route_id),
 	schedules:routeStopsEngine.getSchedules(route_id, agency_name) }); 
 
 });
