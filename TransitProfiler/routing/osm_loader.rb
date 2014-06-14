@@ -1,12 +1,12 @@
 require 'nokogiri'
 require 'tmpdir'
 
-module Mormon
+module Routing
   module OSM
     class Loader
       
       @route_types = [:cycle, :car, :train, :foot, :horse]
-      @cache_dir   = File.join Dir.tmpdir, "mormon", "cache"
+      @cache_dir   = File.join Dir.tmpdir, "routing", "cache"
       
       class << self
         attr_reader   :route_types

@@ -1,4 +1,4 @@
-module Mormon
+module Routing
   module OSM
     module Algorithm
       class Base

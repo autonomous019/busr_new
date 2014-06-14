@@ -52,6 +52,9 @@ app.get('/routes', function(req, res) {
 	res.render('routes',{title:"MTA Routes", routes:routesEngine.getRoutes()});
 });
 
+
+
+//MTA version
 app.get('/route/:id', function(req, res) {
 	var route_id = req.params.id;
 	route_id = route_id.replace("%20","_");
@@ -101,9 +104,11 @@ app.get('/route_stops/:agency_name/:route_id', function(req, res) {
 
 	var agency_name = req.params.agency_name;
 	var route_id = req.params.route_id;
+	
 	res.render('route_stops',{title:"Route: "+agency_name+" Route: "+route_id, route_id: route_id, agency_name:agency_name, 
 	stops:routeStopsEngine.getStops(route_id, agency_name), 
 	route_map:routeStopsEngine.getRouteMap(route_id, agency_name), 
+	realbus: routeStopsEngine.getRealBus(),
 	schedules:routeStopsEngine.getSchedules(route_id, agency_name) }); 
 
 });

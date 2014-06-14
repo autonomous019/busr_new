@@ -15,6 +15,9 @@ var shape_keys =  new Array();
 var my_schedule_arr = new Array();
 var schedules =  new Array();
 
+var realbus = new Array();
+var get_realbus = new Array();
+
 
 //STOPS
 exports.setStops = function(route_id, agency_name) {
@@ -226,7 +229,7 @@ exports.setSchedules = function(route_id, agency_name) {
 						  schedules.push(data_arr);
 						  
 						  if(cnt === schedule_len-1){
-						  	console.log(schedules);
+						  	//console.log(schedules);
 							return schedules;
 						  }
 						  cnt++;
@@ -239,7 +242,7 @@ exports.setSchedules = function(route_id, agency_name) {
 	  		});	
 	  	}
 	});
-}
+};
 
 
 exports.getSchedules = function(route_id, agency_name) {
@@ -250,3 +253,40 @@ exports.getSchedules = function(route_id, agency_name) {
 };
 
 
+exports.setRealBus = function(){
+    if(realbus.length >= 1){
+    	 //realbus.length = 0;
+		 return realbus;
+    }
+	
+    var request = require('request');
+    
+	proc_realtime = request.get('http://www.intercitytransit.com/rtacs/busdata.txt', function (error, response, body) {
+        
+		if (!error && response.statusCode == 200) {
+            var csv = body;
+			var data = csv.split("\n");
+			for(var x=0; x<data.length-1; x++){
+				realbus.push(data[x]);
+			}
+
+			console.log("realbus len "+realbus.length);
+			return realbus;
+
+        } else {
+			console.log("error in setRealTime");
+        	return realbus;
+        }
+		
+    });	
+	
+	
+};
+
+exports.getRealBus = function() {
+	
+	this.setRealBus();
+	console.log(realbus.length);
+	return realbus;
+
+};

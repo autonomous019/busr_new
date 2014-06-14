@@ -156,7 +156,7 @@ class Aggregator
           days = calendar_days(calendar_data)
           data = c['trip_id'].to_s+" "+c['stop_id'].to_s+" "+c['arrival_time'].to_s+" "+c['stop_sequence'].to_s+" "+c['shape_dist_traveled'].to_s+" "+days+" "+trip_headsign+" "+block_id+" "+service_id
           @redis.rpush @agency_name+":route_schedule_"+route_id.to_s, data
-          @redis.SADD(@agency_name+"_stop_schedule_"+c['stop_id'], c['trip_id'].to_s+" "+c['arrival_time'].to_s+" "+c['departure_time'])
+          #@redis.SADD(@agency_name+"_stop_schedule_"+c['stop_id'], c['trip_id'].to_s+" "+c['arrival_time'].to_s+" "+c['departure_time'])
           
           #need a set of time data to stop_id from c['stop_id'] above 
      end

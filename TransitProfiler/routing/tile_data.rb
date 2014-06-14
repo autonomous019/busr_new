@@ -1,7 +1,7 @@
 require 'open-uri'
 require 'fileutils'
 
-module Mormon
+module Routing
   module Tile
     class Data
       TILE_DIR = 'cache/%d/%d/%d'

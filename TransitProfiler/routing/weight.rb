@@ -1,4 +1,4 @@
-module Mormon
+module Routing
   class Weight
     # Represents an hipotetical velocity of the transport in the way type
     @weightings = {

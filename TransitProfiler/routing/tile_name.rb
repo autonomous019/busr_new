@@ -1,4 +1,4 @@
-module Mormon
+module Routing
   module Tile
     class Name
 

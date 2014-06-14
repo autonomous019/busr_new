@@ -1,4 +1,4 @@
-module Mormon
+module Routing
   module OSM
     class StopNode
       attr_accessor :node_id, :distance, :road, :house_number, :zip_code
