@@ -12,11 +12,10 @@ realtime:
  
  	height: 50%;
  	width: 70%;
- 	z-index: 1;
+ 	/* z-index: 1; */
  }
  
  
- <style>
  .leaflet-control-command{
  	background-image: url('/bus_stop_icon.png');
 	
@@ -58,7 +57,7 @@ realtime:
  }
  </style>
  
- </style>
+
  
 <div id="latlng"></div>
 <div id="map"></div>
@@ -124,10 +123,40 @@ realtime:
   
   
   
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 <script type="text/javascript">
 
-	var latlngs = new Array();
-		
+
+function onBusLocClick(e) {
+	
+	$('#myModal').appendTo("body").modal('show');
+	//alert(route);
+	//$('#display-text').html(e);
+}
+
+
+{{#each stops}}
+function onStopClick{{stop_id}}(e) {
+	$('#stop{{stop_id}}').appendTo("body").modal('show');
+}
+{{/each}}
+
+	var latlngs = new Array();	
 	{{#each route_map}}
 		 latlngs.push(new L.LatLng( {{shape_pt_lat}},{{shape_pt_lon}} ));
 	{{/each}}
@@ -160,7 +189,7 @@ realtime:
  		               "properties": { 
  				           "route_real_id": "{{route_real_id}}", 
      			            "headsign": "{{headsign}}",
- 			                "popupContent": "<b>{{real_route_id}}</b><br />{{headsign}} <small>{{time_delay}}</small>",
+ 			                "popupContent": "<b>{{real_route_id}}</b> - <small>{{time_delay}}</small>",
 							
  			            },
  		                "geometry": {
@@ -211,46 +240,35 @@ realtime:
 			       popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
 			   });
 		
+		
+		       //Stops Layer 
 	           var stopies = new L.LayerGroup();
-			   
-			   var link = "";
-			   
 			   {{#each stops}}
-			
-			        L.marker([ {{stop_lat}}, {{stop_lon}} ],{icon: busStopIcon}).bindPopup(' {{stop_name}} - {{stop_id}}').addTo(stopies),
+			        L.marker([ {{stop_lat}}, {{stop_lon}} ],{icon: busStopIcon}).bindPopup(' {{stop_name}} - {{stop_id}}').addTo(stopies).on( 'click', onStopClick{{stop_id}} ),
 			   {{/each}}
- 
 	           L.marker([0, -0]).bindPopup('Prime Meridian.').addTo(stopies);
 			   
+			   //Map Points, route line
 	           var map_points = new L.LayerGroup();
-			   
 			   {{#each route_map}}
 			        L.marker([ {{shape_pt_lat}}, {{shape_pt_lon}} ], {icon: routeIcon}).bindPopup( '{{shape_dist_traveled}} - {{shape_id}}: {{shape_pt_sequence}}' ).addTo(map_points),
 			   {{/each}}
- 
 	           L.marker([0, -0]).bindPopup('0,0').addTo(map_points);
 			   
+			   //Bus Location Info Layer
 			   var bus_locations = new L.LayerGroup();
 			   {{#each realbus}}
-			        L.marker([ {{lat}}, {{lon}} ], {icon: busLocIcon}).bindPopup( '{{route_real_id}} - {{headsign}}: {{time_delay}}' ).addTo(bus_locations),
+			        L.marker([ {{lat}}, {{lon}} ], {icon: busLocIcon}).bindPopup( '{{route_real_id}} - {{headsign}}: {{time_delay}}' ).addTo(bus_locations).on('click', onBusLocClick ),
 			   {{/each}}
- 
 	           L.marker([0, -0]).bindPopup('0,0').addTo(bus_locations);
-			   
-			   
-			   
 			   
 	           var cmAttr = 'Busr.info Map data &copy; 2011 OpenStreetMap contributors',
 	           cmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-
-	           
 
 		       var map = L.map('map', {
 		           zoom: 10,
 		           layers: [ bus_locations, stopies ]
 		       });
-
-
 
 		       var overlays = {
 		           "Route Line": map_points,
@@ -304,14 +322,6 @@ realtime:
 
 <div id="info_panel">
 	<script type="text/javascript">
-	/*
-	var myStringArray = sched;
-	var arrayLength = myStringArray.length;
-	for (var i = 0; i < arrayLength; i++) {
-	  
-	    document.write(myStringArray[i]);
-	}
-	*/
 
 	
 	function SortBySequencer(a, b){
@@ -332,6 +342,7 @@ realtime:
 		if(cnt === 0){
 			//document.write("<h4>Trip Headsign: "+sched[cnt].trip_headsign+"</h4>");
 		}
+		
 		//need to show the headsign of the bus
 		if(trip_id_reference != value.trip_id){
 			//reset the array and reset trip_id_reference to next trip_id in sched array
@@ -361,13 +372,63 @@ realtime:
 	});
 	</script>
 	
-	<script type="text/javascript">
 
-	
-	</script>
+
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        <p><div id="display-text">One fine body&hellip;</div></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+{{#each stops}}
+
+<div class="modal fade" id="stop{{stop_id}}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">{{stop_name}}</h4>
+      </div>
+      <div class="modal-body">
+        <p><div id="display-text">{{stop_id}}&hellip;</div></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+{{/each}}
+
+
 	
 	
 </div>
+
+
+
+
+
+
+
+
+
+
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
