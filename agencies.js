@@ -114,6 +114,11 @@ exports.getAgencies = function() {
 				  
  				 my_route_arr = results;
 				 my_route_arr['route_agency_id'] = agency_name;
+				 /*
+				 route_short_name: '609',
+				   route_long_name: 'Tumwater/Lakewood',
+				 */
+				 //console.log(results);
 				 //console.log("agency id "+my_route_arr['route_agency_id']);
  				 routes.push(my_route_arr);
 				 

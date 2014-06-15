@@ -253,7 +253,7 @@ exports.getSchedules = function(route_id, agency_name) {
 };
 
 
-exports.setRealBus = function(route_id){
+exports.setRealBus = function(route_short_name){
     if(realbus.length >= 1){
     	 //realbus.length = 0;
 		 return realbus;
@@ -273,10 +273,18 @@ exports.setRealBus = function(route_id){
                    0:trip_id, 1:route_id, 2:unkown, 3:unknown, 4:unknown, 5:time delay, 6:unkwown, 7:headsign, 8:unkown, 9:lat, 10:lon, 11:unkown, 12:unknown, 13:unknown, 14:unknown, 15:unknown, 16:unknown
 				*/
 				d = data[x].split(",");
-				//lookup route_short_name from agency:route_route_id route_short_name field here
-				realbus["route_id"] = d[1];
-				
-				realbus.push(d[1]);
+				var data_arr = new Array();
+				data_arr["route_real_id"] = d[1];
+				data_arr["time_delay"] = d[5];
+				data_arr["headsign"] = d[7];
+				data_arr["lat"] = d[9];
+				data_arr["lon"] = d[10];
+				//filter to match route_short_name to route_real_id, on sys map take this filter out
+				if(d[1] === route_short_name){
+					realbus.push(data_arr);
+				}
+				//realbus.push(data_arr);
+				//realbus.push(d[1]);
 			}
 
 			console.log("realbus len "+realbus.length);
@@ -293,9 +301,9 @@ exports.setRealBus = function(route_id){
 	
 };
 
-exports.getRealBus = function(route_id) {
+exports.getRealBus = function(route_short_name) {
 	
-	this.setRealBus(route_id);
+	this.setRealBus(route_short_name);
 	console.log(realbus.length);
 	return realbus;
 

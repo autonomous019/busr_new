@@ -1,4 +1,4 @@
-<h3>Route: {{route_id}}</h3>
+<h3>Route: {{route_short_name}} : {{route_long_name}}</h3>
 
 realtime: 
 {{  realbus.length }}
@@ -106,7 +106,19 @@ realtime:
   {{#each realbus}}
   
   
+  bus_location.push({
+	  route_real_id: '{{route_real_id}}',
+	  time_delay: '{{time_delay}}',
+	  headsign: '{{headsign}}',
+	  lat: '{{lat}}',
+	  long: '{{lon}}'
+	
+  });
+
+
+
   {{/each}}
+ 
 
   </script>
   
@@ -139,6 +151,26 @@ realtime:
 	
   	              {{/each}}
 		       ];
+			   
+ 		      var bus_locs = [
+ 	              {{#each realbus}}
+
+ 		          {
+ 		               "type": "Feature",
+ 		               "properties": { 
+ 				           "route_real_id": "{{route_real_id}}", 
+     			            "headsign": "{{headsign}}",
+ 			                "popupContent": "<b>{{real_route_id}}</b><br />{{headsign}} <small>{{time_delay}}</small>",
+							
+ 			            },
+ 		                "geometry": {
+ 		                   "type": "Point",
+ 		                   "coordinates": [ {{lat}}, {{lon}} ]
+ 		                }
+ 		          },
+	
+   	              {{/each}}
+ 		       ];
 		
 			   var geojsonMarkerOptions = {
 			       radius: 3,
@@ -158,6 +190,16 @@ realtime:
 			       shadowAnchor: [4, 4],  // the same for the shadow
 			       popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
 			   });
+			   
+			   var busLocIcon = L.icon({
+			       iconUrl: '/bus_loc.png',
+			       shadowUrl: '/tri.png',
+			       iconSize:     [24, 24], // size of the icon
+			       shadowSize:   [24, 24], // size of the shadow
+			       iconAnchor:   [12, 12], // point of the icon which will correspond to marker's location
+			       shadowAnchor: [8, 8],  // the same for the shadow
+			       popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
+			   });
 		
 			   var routeIcon = L.icon({
 			       iconUrl: '/route_marker.png',
@@ -170,6 +212,7 @@ realtime:
 			   });
 		
 	           var stopies = new L.LayerGroup();
+			   
 			   var link = "";
 			   
 			   {{#each stops}}
@@ -187,6 +230,16 @@ realtime:
  
 	           L.marker([0, -0]).bindPopup('0,0').addTo(map_points);
 			   
+			   var bus_locations = new L.LayerGroup();
+			   {{#each realbus}}
+			        L.marker([ {{lat}}, {{lon}} ], {icon: busLocIcon}).bindPopup( '{{route_real_id}} - {{headsign}}: {{time_delay}}' ).addTo(bus_locations),
+			   {{/each}}
+ 
+	           L.marker([0, -0]).bindPopup('0,0').addTo(bus_locations);
+			   
+			   
+			   
+			   
 	           var cmAttr = 'Busr.info Map data &copy; 2011 OpenStreetMap contributors',
 	           cmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
@@ -194,14 +247,16 @@ realtime:
 
 		       var map = L.map('map', {
 		           zoom: 10,
-		           layers: [ stopies]
+		           layers: [ bus_locations, stopies ]
 		       });
 
 
 
 		       var overlays = {
 		           "Route Line": map_points,
+				   "Where is Bus?": bus_locations, 
 		           "Stops": stopies
+				   
 		       };
 
 		       L.control.layers( overlays).addTo(map);
@@ -244,6 +299,7 @@ realtime:
   <br /><br />
    <br /><br />
     <br /><br />
+	
 
 
 <div id="info_panel">

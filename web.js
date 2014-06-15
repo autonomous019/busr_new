@@ -100,15 +100,21 @@ app.get('/stop/:id', function(req, res) {
 
 
 //ROUTE STOPS ROUTE STOPS ROUTE STOPS 
-app.get('/route_stops/:agency_name/:route_id', function(req, res) {
+app.get('/route_stops/:agency_name/:route_id/:route_short_name/:route_long_name', function(req, res) {
 
 	var agency_name = req.params.agency_name;
 	var route_id = req.params.route_id;
+	var route_short_name = req.params.route_short_name;
+	var route_long_name = req.params.route_long_name;
 	
-	res.render('route_stops',{title:"Route: "+agency_name+" Route: "+route_id, route_id: route_id, agency_name:agency_name, 
+	res.render('route_stops',{title:"Route: "+agency_name+" Route: "+route_id, 
+	route_id: route_id, 
+	agency_name:agency_name, 
+	route_short_name:route_short_name, 
+	route_long_name:route_long_name, 
 	stops:routeStopsEngine.getStops(route_id, agency_name), 
 	route_map:routeStopsEngine.getRouteMap(route_id, agency_name), 
-	realbus: routeStopsEngine.getRealBus(route_id),
+	realbus: routeStopsEngine.getRealBus(route_short_name),
 	schedules:routeStopsEngine.getSchedules(route_id, agency_name) }); 
 
 });
