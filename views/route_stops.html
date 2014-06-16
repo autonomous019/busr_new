@@ -387,12 +387,12 @@ function onStopClick{{stop_id}}(e) {
 	
 	
 	function filterStopsInfo(stop_id){
-		
+		$("#stop_info_"+stop_id ).html( "schedule: " );
 		for(k=0; k<sched.length; k++){
 		    
 			if(sched[k].stop_id == stop_id){
 				
-				$("#stop_info_"+stop_id ).html( sched[k].stop_id+" "+sched[k].arrival_time );
+				$("#stop_info_"+stop_id ).append( sched[k].arrival_time +" | " );
 				
 			}
 		
