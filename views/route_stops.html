@@ -142,9 +142,13 @@ realtime:
 <script type="text/javascript">
 
 
+
+
+
 function onBusLocClick(e) {
 	
 	$('#myModal').appendTo("body").modal('show');
+	
 	//alert(route);
 	//$('#display-text').html(e);
 }
@@ -153,6 +157,7 @@ function onBusLocClick(e) {
 {{#each stops}}
 function onStopClick{{stop_id}}(e) {
 	$('#stop{{stop_id}}').appendTo("body").modal('show');
+	filterStopsInfo('{{stop_id}}');
 }
 {{/each}}
 
@@ -319,6 +324,57 @@ function onStopClick{{stop_id}}(e) {
     <br /><br />
 	
 
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        <p><div id="display-text">One fine body&hellip;</div></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+{{#each stops}}
+
+<div class="modal fade" id="stop{{stop_id}}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">{{stop_name}} 
+		
+		
+		</h4>
+      </div>
+      <div class="modal-body">
+        <p><div id="display-text">{{stop_id}}&hellip;
+		
+		<div id="stop_info_{{stop_id}}">jklsdjfldsjfs</div>
+		
+		
+		</div></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+{{/each}}
+
+
+	
 
 <div id="info_panel">
 	<script type="text/javascript">
@@ -327,6 +383,22 @@ function onStopClick{{stop_id}}(e) {
 	function SortBySequencer(a, b){
 	  //integer sorting algo
 	  return a.sequencer-b.sequencer
+	}
+	
+	
+	function filterStopsInfo(stop_id){
+		
+		for(k=0; k<sched.length; k++){
+		    
+			if(sched[k].stop_id == stop_id){
+				
+				$("#stop_info_"+stop_id ).html( sched[k].stop_id+" "+sched[k].arrival_time );
+				
+			}
+		
+		}
+	
+	
 	}
 
 	
@@ -370,53 +442,19 @@ function onStopClick{{stop_id}}(e) {
 
 	  cnt++;
 	});
+	
+	
+	
+	
+
+	
+	
+	
+	
 	</script>
 	
 
 
-<div class="modal fade" id="myModal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Modal title</h4>
-      </div>
-      <div class="modal-body">
-        <p><div id="display-text">One fine body&hellip;</div></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-
-
-{{#each stops}}
-
-<div class="modal fade" id="stop{{stop_id}}">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">{{stop_name}}</h4>
-      </div>
-      <div class="modal-body">
-        <p><div id="display-text">{{stop_id}}&hellip;</div></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-{{/each}}
-
-
-	
 	
 </div>
 
