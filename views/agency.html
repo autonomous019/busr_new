@@ -1,14 +1,14 @@
-<p>&nbsp;</p>
-{{agent.0.agency_name}}
+
+{{!-- no_underscore agent.0.agency_name --}}
  
 
 {{#each agent}}
-<h2>{{agency_name}} </h2>
+<h3>{{no_underscore agency_name}} </h3>
 
   {{agency_url}}<br/>
   {{agency_timezone}}<br/>
   {{agency_phone}}<br/>
-  {{agency_fare_url}}<br/>
+  <a href="{{agency_fare_url}}" target="_new">{{agency_fare_url}}</a><br/>
   
 {{/each}}
 

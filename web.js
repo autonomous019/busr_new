@@ -8,6 +8,9 @@ app
   .use(everyauth.middleware(app));
 */
 
+var request = require('request');
+var fs = require('fs');
+
 //app templating engines   
 var hbs = require('hbs');
 var helpers = require('./helpers.js'); //Handlebars helpers methods
@@ -106,6 +109,10 @@ app.get('/route_stops/:agency_name/:route_id/:route_short_name/:route_long_name'
 	var route_id = req.params.route_id;
 	var route_short_name = req.params.route_short_name;
 	var route_long_name = req.params.route_long_name;
+	var realbus = new Array();
+	
+    
+	request('http://google.com/doodle.png').pipe(fs.createWriteStream('doodle.png'))
 	
 	res.render('route_stops',{title:"Route: "+agency_name+" Route: "+route_id, 
 	route_id: route_id, 

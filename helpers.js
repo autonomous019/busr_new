@@ -28,3 +28,13 @@ var Handlebars = require('hbs');
 	   }
 	   return options.inverse(this);
 	 });
+	 
+	 Handlebars.registerHelper('no_underscore', function(text) {
+		 //sample implmentation in agency.html
+	   text = Handlebars.Utils.escapeExpression(text);
+	   text = text.replace("_", " ");
+	   
+	   var result = text;
+
+	   return new Handlebars.SafeString(result);
+	 });

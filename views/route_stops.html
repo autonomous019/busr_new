@@ -1,9 +1,14 @@
 <h3>Route: {{route_short_name}} : {{route_long_name}}</h3>
 
-realtime: 
+
 {{  realbus.length }}
 
+<script type="text/javascript">
 
+var real_len = {{realbus.length}};
+
+
+</script>
  
  <style>
  #map {
@@ -56,263 +61,13 @@ realtime:
 
  }
  </style>
- 
 
  
 <div id="latlng"></div>
 <div id="map"></div>
 
   
-  
-  <script type="text/javascript">
-  //create arrays of information for further processing on client
-  
-  var sched = new Array();
-  var stop_info = new Array();
-  var bus_location = new Array();
- 
-  //stops information
-   {{#each stops}}
-   
-   stop_info.push({
-      
- 	  stop_id: '{{stop_id}}',
- 	  stop_name: '{{stop_name}}',
- 	  stop_lat: '{{stop_lat}}',
- 	  stop_lon: '{{stop_lon}}'
-	  
-   });
-   
-   {{/each}}
-   
-  //route schedule information 
-  {{#each schedules}}
 
-  sched.push({
-      trip_id: '{{trip_id}}',
-	  stop_id: '{{stop_id}}',
-	  arrival_time: '{{arrival_time}}',
-	  sequencer: '{{sequencer}}',
-	  distance_from_head: '{{distance_from_head}}',
-	  days: '{{days}}',
-	  trip_headsign: '{{trip_headsign}}',
-	  block_id: '{{block_id}}'
-  });
-  
-	    
-  {{/each}}
-  
-  {{#each realbus}}
-  
-  
-  bus_location.push({
-	  route_real_id: '{{route_real_id}}',
-	  time_delay: '{{time_delay}}',
-	  headsign: '{{headsign}}',
-	  lat: '{{lat}}',
-	  long: '{{lon}}'
-	
-  });
-
-
-
-  {{/each}}
- 
-
-  </script>
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-<script type="text/javascript">
-
-
-
-
-
-function onBusLocClick(e) {
-	
-	$('#myModal').appendTo("body").modal('show');
-	
-	//alert(route);
-	//$('#display-text').html(e);
-}
-
-
-{{#each stops}}
-function onStopClick{{stop_id}}(e) {
-	$('#stop{{stop_id}}').appendTo("body").modal('show');
-	filterStopsInfo('{{stop_id}}');
-}
-{{/each}}
-
-	var latlngs = new Array();	
-	{{#each route_map}}
-		 latlngs.push(new L.LatLng( {{shape_pt_lat}},{{shape_pt_lon}} ));
-	{{/each}}
-		
-		      var stops = [
-	              {{#each stops}}
-
-		          {
-		               "type": "Feature",
-		               "properties": { 
-				           "stop_id": "{{stop_id}}", 
-    			            "stop_name": "{{stop_name}}",
-			                "popupContent": "<b>{{stop_name}}</b><br />Stop ID: {{stop_id}} ",
-							
-			            },
-		                "geometry": {
-		                   "type": "Point",
-		                   "coordinates": [ {{stop_lat}}, {{stop_lon}} ]
-		                }
-		          },
-	
-  	              {{/each}}
-		       ];
-			   
- 		      var bus_locs = [
- 	              {{#each realbus}}
-
- 		          {
- 		               "type": "Feature",
- 		               "properties": { 
- 				           "route_real_id": "{{route_real_id}}", 
-     			            "headsign": "{{headsign}}",
- 			                "popupContent": "<b>{{real_route_id}}</b> - <small>{{time_delay}}</small>",
-							
- 			            },
- 		                "geometry": {
- 		                   "type": "Point",
- 		                   "coordinates": [ {{lat}}, {{lon}} ]
- 		                }
- 		          },
-	
-   	              {{/each}}
- 		       ];
-		
-			   var geojsonMarkerOptions = {
-			       radius: 3,
-			       fillColor: "#ff7800",
-			       color: "#000",
-			       weight: 1,
-			       opacity: 1,
-			       fillOpacity: 0.8
-			   };
-			   
-			   var busStopIcon = L.icon({
-			       iconUrl: '/bus_stop_icon.png',
-			       shadowUrl: '/tri.png',
-			       iconSize:     [32, 32], // size of the icon
-			       shadowSize:   [32, 32], // size of the shadow
-			       iconAnchor:   [16, 16], // point of the icon which will correspond to marker's location
-			       shadowAnchor: [4, 4],  // the same for the shadow
-			       popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
-			   });
-			   
-			   var busLocIcon = L.icon({
-			       iconUrl: '/bus_loc.png',
-			       shadowUrl: '/tri.png',
-			       iconSize:     [24, 24], // size of the icon
-			       shadowSize:   [24, 24], // size of the shadow
-			       iconAnchor:   [12, 12], // point of the icon which will correspond to marker's location
-			       shadowAnchor: [8, 8],  // the same for the shadow
-			       popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
-			   });
-		
-			   var routeIcon = L.icon({
-			       iconUrl: '/route_marker.png',
-			       shadowUrl: '/tri.png',
-			       iconSize:     [12, 12], // size of the icon
-			       shadowSize:   [12, 12], // size of the shadow
-			       iconAnchor:   [6, 6], // point of the icon which will correspond to marker's location
-			       shadowAnchor: [6, 6],  // the same for the shadow
-			       popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
-			   });
-		
-		
-		       //Stops Layer 
-	           var stopies = new L.LayerGroup();
-			   {{#each stops}}
-			        L.marker([ {{stop_lat}}, {{stop_lon}} ],{icon: busStopIcon}).bindPopup(' {{stop_name}} - {{stop_id}}').addTo(stopies).on( 'click', onStopClick{{stop_id}} ),
-			   {{/each}}
-	           L.marker([0, -0]).bindPopup('Prime Meridian.').addTo(stopies);
-			   
-			   //Map Points, route line
-	           var map_points = new L.LayerGroup();
-			   {{#each route_map}}
-			        L.marker([ {{shape_pt_lat}}, {{shape_pt_lon}} ], {icon: routeIcon}).bindPopup( '{{shape_dist_traveled}} - {{shape_id}}: {{shape_pt_sequence}}' ).addTo(map_points),
-			   {{/each}}
-	           L.marker([0, -0]).bindPopup('0,0').addTo(map_points);
-			   
-			   //Bus Location Info Layer
-			   var bus_locations = new L.LayerGroup();
-			   {{#each realbus}}
-			        L.marker([ {{lat}}, {{lon}} ], {icon: busLocIcon}).bindPopup( '{{route_real_id}} - {{headsign}}: {{time_delay}}' ).addTo(bus_locations).on('click', onBusLocClick ),
-			   {{/each}}
-	           L.marker([0, -0]).bindPopup('0,0').addTo(bus_locations);
-			   
-	           var cmAttr = 'Busr.info Map data &copy; 2011 OpenStreetMap contributors',
-	           cmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-
-		       var map = L.map('map', {
-		           zoom: 10,
-		           layers: [ bus_locations, stopies ]
-		       });
-
-		       var overlays = {
-		           "Route Line": map_points,
-				   "Where is Bus?": bus_locations, 
-		           "Stops": stopies
-				   
-		       };
-
-		       L.control.layers( overlays).addTo(map);
-	
-			   L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-				            attribution: '© <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
-				            maxZoom: 18
-				         }).addTo(map);			
-	 
-			    var onLocationFound = function(e) {
-					var radius = e.accuracy / 2;
-					//$("#latlng").text(e.latlng);
-					L.marker(e.latlng).addTo(map)
-						.bindPopup("I am here").openPopup();
-
-					L.circle(e.latlng, radius).addTo(map);
-				}
-
-			    var onLocationError = function(e) {
-				    $("#latlng").text("ERROR: "+e.message);
-					
-				}
-			
-				// create a red polyline from an arrays of LatLng points
-				var polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
-						
-			  map.on('locationfound', onLocationFound);
-			  map.on('locationerror', onLocationError);
-			  map.locate({setView: true, zoom: 16, maxZoom: 16});
-	     
-			
-				
-        </script>
 
 
 
@@ -323,24 +78,6 @@ function onStopClick{{stop_id}}(e) {
    <br /><br />
     <br /><br />
 	
-
-<div class="modal fade" id="myModal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Modal title</h4>
-      </div>
-      <div class="modal-body">
-        <p><div id="display-text">One fine body&hellip;</div></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 
 
 
@@ -357,9 +94,9 @@ function onStopClick{{stop_id}}(e) {
 		</h4>
       </div>
       <div class="modal-body">
-        <p><div id="display-text">{{stop_id}}&hellip;
+        <p><div id="display-text">&hellip;
 		
-		<div id="stop_info_{{stop_id}}">jklsdjfldsjfs</div>
+		<div id="stop_info_{{stop_id}}"></div>
 		
 		
 		</div></p>
@@ -377,28 +114,274 @@ function onStopClick{{stop_id}}(e) {
 	
 
 <div id="info_panel">
+	
+	
+	
+  
+	  <script type="text/javascript">
+	  //create arrays of information for further processing on client
+  
+	  var sched = new Array();
+	  var stop_info = new Array();
+	  var bus_location = new Array();
+ 
+	  //stops information
+	   {{#each stops}}
+   
+	   stop_info.push({
+      
+	 	  stop_id: '{{stop_id}}',
+	 	  stop_name: '{{stop_name}}',
+	 	  stop_lat: '{{stop_lat}}',
+	 	  stop_lon: '{{stop_lon}}'
+	  
+	   });
+   
+	   {{/each}}
+   
+	  //route schedule information 
+	  {{#each schedules}}
+
+	  sched.push({
+	      trip_id: '{{trip_id}}',
+		  stop_id: '{{stop_id}}',
+		  arrival_time: '{{arrival_time}}',
+		  sequencer: '{{sequencer}}',
+		  distance_from_head: '{{distance_from_head}}',
+		  days: '{{days}}',
+		  trip_headsign: '{{trip_headsign}}',
+		  block_id: '{{block_id}}'
+	  });
+  
+	    
+	  {{/each}}
+  
+	  {{#each realbus}}
+  
+  
+	  bus_location.push({
+		  route_real_id: '{{route_real_id}}',
+		  time_delay: '{{time_delay}}',
+		  headsign: '{{headsign}}',
+		  lat: '{{lat}}',
+		  long: '{{lon}}'
+	
+	  });
+
+
+
+	  {{/each}}
+ 
+
+	  </script>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 	<script type="text/javascript">
 
+
+
+
+
+	function onBusLocClick(e) {
 	
+		$('#myModal').appendTo("body").modal('show');
+	
+		//alert(route);
+		//$('#display-text').html(e);
+	}
+
+
+	{{#each stops}}
+	function onStopClick{{stop_id}}(e) {
+		$('#stop{{stop_id}}').appendTo("body").modal('show');
+		filterStopsInfo('{{stop_id}}', '{{stop_name}}');
+	}
+	{{/each}}
+
+		var latlngs = new Array();	
+		{{#each route_map}}
+			 latlngs.push(new L.LatLng( {{shape_pt_lat}},{{shape_pt_lon}} ));
+		{{/each}}
+		
+			      var stops = [
+		              {{#each stops}}
+
+			          {
+			               "type": "Feature",
+			               "properties": { 
+					           "stop_id": "{{stop_id}}", 
+	    			            "stop_name": "{{stop_name}}",
+				                "popupContent": "<b>{{stop_name}}</b><br />Stop ID: {{stop_id}} ",
+							
+				            },
+			                "geometry": {
+			                   "type": "Point",
+			                   "coordinates": [ {{stop_lat}}, {{stop_lon}} ]
+			                }
+			          },
+	
+	  	              {{/each}}
+			       ];
+			   
+	 		      var bus_locs = [
+	 	              {{#each realbus}}
+
+	 		          {
+	 		               "type": "Feature",
+	 		               "properties": { 
+	 				           "route_real_id": "{{route_real_id}}", 
+	     			            "headsign": "{{headsign}}",
+	 			                "popupContent": "<b>{{real_route_id}}</b> - <small>{{time_delay}}</small>",
+							
+	 			            },
+	 		                "geometry": {
+	 		                   "type": "Point",
+	 		                   "coordinates": [ {{lat}}, {{lon}} ]
+	 		                }
+	 		          },
+	
+	   	              {{/each}}
+	 		       ];
+		
+				   var geojsonMarkerOptions = {
+				       radius: 3,
+				       fillColor: "#ff7800",
+				       color: "#000",
+				       weight: 1,
+				       opacity: 1,
+				       fillOpacity: 0.8
+				   };
+			   
+				   var busStopIcon = L.icon({
+				       iconUrl: '/bus_stop_icon.png',
+				       shadowUrl: '/tri.png',
+				       iconSize:     [32, 32], // size of the icon
+				       shadowSize:   [32, 32], // size of the shadow
+				       iconAnchor:   [16, 16], // point of the icon which will correspond to marker's location
+				       shadowAnchor: [4, 4],  // the same for the shadow
+				       popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
+				   });
+			   
+				   var busLocIcon = L.icon({
+				       iconUrl: '/bus_loc.png',
+				       iconSize:     [24, 24], // size of the icon
+				       iconAnchor:   [12, 12], // point of the icon which will correspond to marker's location
+				       popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
+				   });
+		
+				   var routeIcon = L.icon({
+				       iconUrl: '/route_marker.png',
+				       iconSize:     [12, 12], // size of the icon
+				       iconAnchor:   [6, 6], // point of the icon which will correspond to marker's location
+				       popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
+				   });
+		
+		
+			       //Stops Layer 
+		           var stopies = new L.LayerGroup();
+				   {{#each stops}}
+				        L.marker([ {{stop_lat}}, {{stop_lon}} ],{icon: busStopIcon}).addTo(stopies).on( 'click', onStopClick{{stop_id}} ),
+				   {{/each}}
+		           L.marker([0, -0]).addTo(stopies);
+			   
+				   //Map Points, route line
+		           var map_points = new L.LayerGroup();
+				   {{#each route_map}}
+				        L.marker([ {{shape_pt_lat}}, {{shape_pt_lon}} ], {icon: routeIcon}).bindPopup( '{{shape_dist_traveled}} - {{shape_id}}: {{shape_pt_sequence}}' ).addTo(map_points),
+				   {{/each}}
+		           L.marker([0, -0]).bindPopup('0,0').addTo(map_points);
+			   
+				   //Bus Location Info Layer
+				   var bus_locations = new L.LayerGroup();
+				   {{#each realbus}}
+				        L.marker([ {{lat}}, {{lon}} ], {icon: busLocIcon}).bindPopup( '{{route_real_id}} - {{headsign}}: {{time_delay}}' ).addTo(bus_locations).on('click', onBusLocClick ),
+				   {{/each}}
+		           L.marker([0, -0]).bindPopup('0,0').addTo(bus_locations);
+			   
+		           var cmAttr = 'Busr.info Map data &copy; 2011 OpenStreetMap contributors',
+		           cmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+			       var map = L.map('map', {
+			           zoom: 10,
+			           layers: [ bus_locations, stopies ]
+			       });
+
+			       var overlays = {
+			           "Route Line": map_points,
+					   "Where is Bus?": bus_locations, 
+			           "Stops": stopies
+				   
+			       };
+
+			       L.control.layers( overlays).addTo(map);
+	
+				   L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+					            attribution: '© <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+					            maxZoom: 18
+					         }).addTo(map);			
+	 
+				    var onLocationFound = function(e) {
+						var radius = e.accuracy / 2;
+						//$("#latlng").text(e.latlng);
+						L.marker(e.latlng).addTo(map)
+							.bindPopup("I am here").openPopup();
+
+						L.circle(e.latlng, radius).addTo(map);
+					}
+
+				    var onLocationError = function(e) {
+					    $("#latlng").text("ERROR: "+e.message);
+					
+					}
+			
+					// create a red polyline from an arrays of LatLng points
+					var polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
+						
+				  map.on('locationfound', onLocationFound);
+				  map.on('locationerror', onLocationError);
+				  map.locate({setView: true, zoom: 13, maxZoom: 14});
+	     
+			
+				
+	        </script>
+	
+	
+	
+	<script type="text/javascript">
+
+
 	function SortBySequencer(a, b){
 	  //integer sorting algo
 	  return a.sequencer-b.sequencer
 	}
 	
 	
-	function filterStopsInfo(stop_id){
-		$("#stop_info_"+stop_id ).html( "schedule: " );
-		for(k=0; k<sched.length; k++){
-		    
-			if(sched[k].stop_id == stop_id){
-				
-				$("#stop_info_"+stop_id ).append( sched[k].arrival_time +" | " );
-				
-			}
+	function filterStopsInfo(stop_id, stop_name){
+		$("#stop_info_"+stop_id ).html( "<h3>schedule for stop "+stop_id+" '"+stop_name+"'</h3>" );
 		
+		for(k=0; k<sched.length; k++){    
+			if(sched[k].stop_id == stop_id){
+				//TODO add check to see if sched[k].days is a current day and only display todays schedule. 
+				$("#stop_info_"+stop_id ).append( sched[k].arrival_time +" | " );	
+			}
 		}
-	
-	
 	}
 
 	
