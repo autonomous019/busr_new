@@ -6,8 +6,8 @@
  	position: absolute;
     text-position: center;
  
- 	height: 50%;
- 	width: 70%;
+ 	height: 60%;
+ 	width: 80%;
  	/* z-index: 1; */
  }
  
@@ -342,10 +342,19 @@ var marker = L.marker([51.5, -0.09]).addTo(map);
 	function filterStopsInfo(stop_id, stop_name){
 		$("#stop_info_"+stop_id ).html( "<h3>schedule for stop "+stop_id+" '"+stop_name+"'</h3>" );
 		
+		//TODO sort by days
+		var days = sched[0].days;
+		$("#stop_info_"+stop_id ).append( days +" <br /> " );	
 		for(k=0; k<sched.length; k++){    
+			if(days != sched[k].days){
+				//new day and display
+				days = sched[k].days;
+				$("#stop_info_"+stop_id ).append( "<br />"+days +" <br /> " );	
+			}
 			if(sched[k].stop_id == stop_id){
 				//TODO add check to see if sched[k].days is a current day and only display todays schedule. 
 				$("#stop_info_"+stop_id ).append( sched[k].arrival_time +" | " );	
+				
 			}
 		}
 	}
@@ -355,6 +364,7 @@ var marker = L.marker([51.5, -0.09]).addTo(map);
 	var cnt = 0;
 	var trip_id_reference = sched[0].trip_id;
 	var temp_arr = new Array();
+	/*
 	document.write("<h3>Comprehensive Route Schedule</h3>");
 	
 	$.each( sched, function( key, value ) {
@@ -391,6 +401,7 @@ var marker = L.marker([51.5, -0.09]).addTo(map);
 
 	  cnt++;
 	});
+	*/
 	
 	
 	
