@@ -264,13 +264,7 @@ exports.setRealBus = function(route_short_name){
             var csv = body;
 			var data = csv.split("\n");
 			for(var x=0; x<data.length-1; x++){
-				
-				/*
-                   busdata.txt sample line: 
-                   400,13,99,4104,0,-120,874,CBLE,872,46.981174,-122.918282,1402522051,41,4104,0,3005,
-                   0:trip_id, 1:route_id, 2:unkown, 3:unknown, 4:unknown, 5:time delay, 6:unkwown, 7:headsign, 8:unkown, 9:lat, 10:lon, 11:unkown, 12:unknown, 13:unknown, 14:unknown, 15:unknown, 16:unknown
-				*/
-				
+
 				d = data[x].split(",");
 				var data_arr = new Array();
 				data_arr["route_real_id"] = d[1];

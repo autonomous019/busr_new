@@ -111,8 +111,7 @@ app.get('/route_stops/:agency_name/:route_id/:route_short_name/:route_long_name'
 	var route_long_name = req.params.route_long_name;
 	var realbus = new Array();
 	
-    
-	request('http://google.com/doodle.png').pipe(fs.createWriteStream('doodle.png'))
+	request('http://www.intercitytransit.com/rtacs/busdata.txt').pipe(fs.createWriteStream('public/IT_busdata.txt'))
 	
 	res.render('route_stops',{title:"Route: "+agency_name+" Route: "+route_id, 
 	route_id: route_id, 
@@ -121,7 +120,7 @@ app.get('/route_stops/:agency_name/:route_id/:route_short_name/:route_long_name'
 	route_long_name:route_long_name, 
 	stops:routeStopsEngine.getStops(route_id, agency_name), 
 	route_map:routeStopsEngine.getRouteMap(route_id, agency_name), 
-	realbus: routeStopsEngine.getRealBus(route_short_name),
+	//realbus: routeStopsEngine.getRealBus(route_short_name),
 	schedules:routeStopsEngine.getSchedules(route_id, agency_name) }); 
 
 });

@@ -1,15 +1,6 @@
 <h3>Route: {{route_short_name}} : {{route_long_name}}</h3>
 
-
-{{  realbus.length }}
-
-<script type="text/javascript">
-
-var real_len = {{realbus.length}};
-
-
-</script>
- 
+{{ realbus.length }}
  <style>
  #map {
  	position: absolute;
@@ -77,8 +68,6 @@ var real_len = {{realbus.length}};
   <br /><br />
    <br /><br />
     <br /><br />
-	
-
 
 
 {{#each stops}}
@@ -123,7 +112,7 @@ var real_len = {{realbus.length}};
   
 	  var sched = new Array();
 	  var stop_info = new Array();
-	  var bus_location = new Array();
+	  var bus_info = new Array();
  
 	  //stops information
 	   {{#each stops}}
@@ -155,48 +144,14 @@ var real_len = {{realbus.length}};
   
 	    
 	  {{/each}}
-  
-	  {{#each realbus}}
-  
-  
-	  bus_location.push({
-		  route_real_id: '{{route_real_id}}',
-		  time_delay: '{{time_delay}}',
-		  headsign: '{{headsign}}',
-		  lat: '{{lat}}',
-		  long: '{{lon}}'
-	
-	  });
-
-
-
-	  {{/each}}
- 
 
 	  </script>
   
   
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 	<script type="text/javascript">
-
-
-
+	
 
 
 	function onBusLocClick(e) {
@@ -240,25 +195,33 @@ var real_len = {{realbus.length}};
 	  	              {{/each}}
 			       ];
 			   
-	 		      var bus_locs = [
-	 	              {{#each realbus}}
+			   
+				   //deprecaed not actually used
+				   var bus_locs = [
+				   	 	            
+								   
+								   
+													 
+													  {{#each realbus}}
 
-	 		          {
-	 		               "type": "Feature",
-	 		               "properties": { 
-	 				           "route_real_id": "{{route_real_id}}", 
-	     			            "headsign": "{{headsign}}",
-	 			                "popupContent": "<b>{{real_route_id}}</b> - <small>{{time_delay}}</small>",
-							
-	 			            },
-	 		                "geometry": {
-	 		                   "type": "Point",
-	 		                   "coordinates": [ {{lat}}, {{lon}} ]
-	 		                }
-	 		          },
-	
-	   	              {{/each}}
-	 		       ];
+								   	 		          {
+								   	 		               "type": "Feature",
+								   	 		               "properties": { 
+								   	 				           "route_real_id": "{{route_real_id}}", 
+								   	     			            "headsign": "{{headsign}}",
+								   	 			                "popupContent": "<b>{{real_route_id}}</b> - <small>{{time_delay}}</small>",
+
+								   	 			            },
+								   	 		                "geometry": {
+								   	 		                   "type": "Point",
+								   	 		                   "coordinates": [ {{lat}}, {{lon}} ]
+								   	 		                }
+								   	 		          },
+
+								   	   	              {{/each}}
+													
+								   	 		     			   
+	 		      ];
 		
 				   var geojsonMarkerOptions = {
 				       radius: 3,
@@ -309,18 +272,21 @@ var real_len = {{realbus.length}};
 		           L.marker([0, -0]).bindPopup('0,0').addTo(map_points);
 			   
 				   //Bus Location Info Layer
+				  
 				   var bus_locations = new L.LayerGroup();
 				   {{#each realbus}}
 				        L.marker([ {{lat}}, {{lon}} ], {icon: busLocIcon}).bindPopup( '{{route_real_id}} - {{headsign}}: {{time_delay}}' ).addTo(bus_locations).on('click', onBusLocClick ),
 				   {{/each}}
 		           L.marker([0, -0]).bindPopup('0,0').addTo(bus_locations);
-			   
+			      
+				   
 		           var cmAttr = 'Busr.info Map data &copy; 2011 OpenStreetMap contributors',
 		           cmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
 			       var map = L.map('map', {
 			           zoom: 10,
 			           layers: [ bus_locations, stopies ]
+					   
 			       });
 
 			       var overlays = {
@@ -365,7 +331,7 @@ var real_len = {{realbus.length}};
 	
 	
 	<script type="text/javascript">
-
+var marker = L.marker([51.5, -0.09]).addTo(map);
 
 	function SortBySequencer(a, b){
 	  //integer sorting algo
@@ -429,6 +395,57 @@ var real_len = {{realbus.length}};
 	
 	
 	
+	var bus_data = new Array();
+
+        $.get( "/IT_busdata.txt", function( resp_data ) {
+            
+			bus_data = [];
+			
+			
+	            var csv = resp_data;
+				var data = csv.split("\n");
+				for(var x=0; x<data.length-1; x++){
+				
+					/*
+	                   busdata.txt sample line: 
+	                   400,13,99,4104,0,-120,874,CBLE,872,46.981174,-122.918282,1402522051,41,4104,0,3005,
+	                   0:trip_id, 1:route_id, 2:unkown, 3:unknown, 4:unknown, 5:time delay, 6:unkwown, 7:headsign, 8:unkown, 9:lat, 10:lon, 11:unkown, 12:unknown, 13:unknown, 14:unknown, 15:unknown, 16:unknown
+					*/
+				
+					d = data[x].split(",");
+					var data_arr = new Array();
+					data_arr["route_real_id"] = d[1];
+					data_arr["time_delay"] = d[5];
+					data_arr["headsign"] = d[7];
+					data_arr["lat"] = d[9];
+					data_arr["lon"] = d[10];
+					//filter to match route_short_name to route_real_id, on sys map take this filter out
+					if(d[1] === '{{route_short_name}}' ){
+						
+					  //realbus.push(data_arr);
+				  	  bus_info.push({
+						  
+				  		  route_real_id: data_arr["route_real_id"],
+				  		  time_delay: data_arr["time_delay"],
+				  		  headsign: data_arr["headsign"] ,
+				  		  lat: data_arr["lat"],
+				  		  lon: data_arr["lon"]
+	
+				  	  });
+					  
+					}
+	                
+				}				
+			
+			console.log("bus info len "+bus_info.length + " "+bus_info[0].lat+ " "+bus_info[0].lon);
+			for(var b=0; b<bus_info.length; b++){
+				L.marker([bus_info[b].lat, bus_info[b].lon], {icon: busLocIcon}).bindPopup( bus_info[b].route_real_id+' - '+bus_info[b].time_delay ).addTo(bus_locations).addTo(map);
+				
+			}
+			//L.marker([bus_info[0].lat, bus_info[0].lon], {icon: busLocIcon}).addTo(map);
+			
+  
+        });
 
 	
 	
@@ -443,8 +460,8 @@ var real_len = {{realbus.length}};
 
 
 
-
-
+bus_info_length: 
+{{ bus_info.length }}
 
 
 
