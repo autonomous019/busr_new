@@ -258,7 +258,48 @@ class Aggregator
       return all_temp_coords
   end
   
-end 
+  
+  
+  ########### transfers() #################################################### 
+  #create a set of routes per each stop_id, >1 = transfer stop
+ 
+  def transfers(route_id)
+    
+      stops = Array.new
+      trips = Array.new
+      temp_stops = Array.new
+      trips = @redis.smembers(@agency_name+"_trips_"+route_id.to_s)
+
+
+      trips.each do |trip|
+        puts trip
+        temp_stops += @redis.smembers(@agency_name+"_stop_times_"+trip)   
+      end
+      
+      temp_stops = temp_stops.uniq
+      trips.each do |trip|
+        temp_stops.each do |stop|
+          in_set = @redis.sismember(@agency_name+"_stop_times_"+trip, stop)
+          if(in_set)
+            puts "stop "+stop+" is in set" +trip
+          end
+          @redis.SADD(@agency_name+"_transfers_to_stop_"+stop, route_id.to_s)
+        end
+      end
+      
+      
+     puts temp_stops.length   
+     return temp_stops
+  end 
+  
+  
+  
+  
+  
+  
+  
+  
+end #end of class def
 
 ##################### DRIVER ####################################
 # main driver
@@ -287,7 +328,7 @@ ARGV.each do |argv|
   routes = redis.smembers(argv+'_routes') 
   system_coords = Array.new
 
-#agg.route_schedule(2)
+#agg.transfers(33)
 #exit
   
  
@@ -303,6 +344,21 @@ ARGV.each do |argv|
     routes_cnt += 1
   end
   puts "Total Number of Routes for "+argv+": "+routes_cnt.to_s
+  
+  
+  
+############################################################################## 
+    # generate transfer routes for each stop (atomized)
+    puts
+    puts "Generating Transfers Graph into Redis for Agency: "+argv
+    routes_cnt = 0
+    routes.each do |r|
+      agg_transfers = agg.transfers(r)
+      puts "Stop Routes: "+ r+" STOPS LEN "+agg_transfers.length.to_s
+      routes_cnt += 1
+    end
+   
+  
   
 ############################################################################## 
   puts
