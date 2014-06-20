@@ -15,6 +15,9 @@ var shape_keys =  new Array();
 var my_schedule_arr = new Array();
 var schedules =  new Array();
 
+var my_transfers_arr = new Array();
+var transfers =  new Array();
+
 realbus = new Array();
 get_realbus = new Array();
 
@@ -63,6 +66,10 @@ exports.setStops = function(route_id, agency_name) {
 		  		     }
 		  			  k++;
 		  		});
+				
+				
+				
+				
 				  
 				  
 		  		
@@ -111,21 +118,14 @@ exports.setRouteMap = function(route_id, agency_name) {
 
 		  		      } else {
 			  
-						  //console.log(route_map_ids);
-		
-		  				  
 		  			  	      var k = 0;
 	
-		  					  //console.log(route_map_ids[i]);
 		  					  var route_params = route_map_ids.split(" ");
 		  					  var shape_id = route_params[0];
 		  					  var shape_sequence = route_params[1];
 		  					  shape_keys.push(shape_id+'_'+shape_sequence);
-				          
-						      //console.log("args "+shape_id+' '+shape_sequence);
-							  
-		  					//redis-cli hgetall 'Intercity_Transit:shapes_8_17'
-		  			  		client.hgetall(agency_name+':shapes_'+shape_id+'_'+shape_sequence, function(err, results) {
+
+		  			  		  client.hgetall(agency_name+':shapes_'+shape_id+'_'+shape_sequence, function(err, results) {
 			
 		  			  		   if (err) {
 		          
@@ -303,3 +303,99 @@ exports.getRealBus = function(route_short_name) {
 	return realbus;
 
 };
+
+
+
+//@redis.SADD(@agency_name+"_transfers_to_stop_"+stop)
+//STOPS
+exports.setTransfers = function(route_id, agency_name) {
+	
+    if(transfers.length >= 1){
+    	 transfers.length = 0;
+    }
+	//TODO iterate through stops here
+	
+	
+	
+    client.smembers(agency_name+'_stops_to_route_'+route_id, function(err,stop_ids) {
+
+	   if (err) {
+          
+		   //nothing here because your a poor fucking dweeb loser that has been abused and intimidated your whole life by straights and now suffers from depression, PTSD, mild traumatic brain injury, and massive social anxiety that keeps getting left by the people you love for straight fat ugly chicks or rich older fat ugly gay dudes that have money and power and nothing else. 
+
+	      } else {
+			  //console.log(stop_ids);
+			  i++;
+			  for(var i = 0, len = stop_ids.length; i < len; i++) {  
+		  	      var k = 0;
+	              client.smembers(agency_name+'_transfers_to_stop_'+stop_ids[i], function(err, route_ids) {
+			  	    if (err) {
+			  	  		//nothing here
+			  	    } else {
+						for(x=0; x<route_ids.length; x++){
+							var str_split = route_ids[x].split(":");
+							var my_stop_id = str_split[0];
+							var my_transfer = str_split[1]; 
+							var data_arr = new Array();
+							data_arr['stop_id'] = my_stop_id;
+							data_arr['transfer'] = my_transfer;
+	 		  				transfers.push(data_arr);
+							
+							
+						}
+						
+						
+ 		  				 if(k == stop_ids.length-1){
+ 		  					 console.log(transfers);
+ 		  					 return transfers;
+ 		  				 } 
+			  	    }
+					k++;
+			  	  });	
+		
+	     }
+		 
+	  }
+	});	
+	
+	
+	
+	
+	
+
+	/*
+    client.smembers(agency_name+'_transfers_to_stop_'+stop_id, function(err,route_ids) {
+	
+
+	
+	   if (err) {
+          
+	  		my_arr += [{"stop_id":"404: error, no data"}];
+
+	      } else {
+			  
+			  console.log("route_ids: "+route_ids);
+	  }
+	});	
+	*/
+	
+	
+	
+	
+	
+	
+	
+
+};
+
+
+
+
+exports.getTransfers = function(route_id, agency_name) {
+	this.setTransfers(route_id, agency_name);
+	
+	return transfers;
+
+};
+
+

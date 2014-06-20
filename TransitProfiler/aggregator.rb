@@ -283,7 +283,7 @@ class Aggregator
           if(in_set)
             puts "stop "+stop+" is in set" +trip
           end
-          @redis.SADD(@agency_name+"_transfers_to_stop_"+stop, route_id.to_s)
+          @redis.SADD(@agency_name+"_transfers_to_stop_"+stop, stop+":"+route_id.to_s)
         end
       end
       
@@ -292,12 +292,7 @@ class Aggregator
      return temp_stops
   end 
   
-  
-  
-  
-  
-  
-  
+
   
 end #end of class def
 
