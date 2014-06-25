@@ -270,9 +270,8 @@ class Aggregator
       temp_stops = Array.new
       trips = @redis.smembers(@agency_name+"_trips_"+route_id.to_s)
 
-
       trips.each do |trip|
-        puts trip
+        #puts trip
         temp_stops += @redis.smembers(@agency_name+"_stop_times_"+trip)   
       end
       
@@ -281,17 +280,41 @@ class Aggregator
         temp_stops.each do |stop|
           in_set = @redis.sismember(@agency_name+"_stop_times_"+trip, stop)
           if(in_set)
-            puts "stop "+stop+" is in set" +trip
+            #puts "stop "+stop+" is in set" +trip
           end
           @redis.SADD(@agency_name+"_transfers_to_stop_"+stop, stop+":"+route_id.to_s)
+ 
         end
       end
+      #process route maps here
+      shape_len = @redis.get(@agency_name+":route_shapes_length_"+route_id.to_s)  
+      temp_shapes = Array.new    
+      1.upto shape_len.to_i do |a|
+         temp_shapes.push(@redis.lindex(@agency_name+":route_shapes_"+route_id.to_s, a))
+      end
+      transfer_shapes = Array.new
+      temp_shapes.each do |shape|
+        shaper_info = shape.split(" ")
+        trans_shape_id = shaper_info[0]
+        trans_shape_sequence = shaper_info[1]
+
+        transfer_shapes.push(@redis.hgetall(@agency_name+":shapes_"+trans_shape_id.to_s+"_"+trans_shape_sequence.to_s))
+        
+        
+      end
+      
+      #combine all the data and put into hash referenced by route_id
+      transfer_shapes.each do |tsh|
+        #tsh is a hash of shapes info
+         @redis.SADD(@agency_name+"_trans_route_shapes_"+route_id.to_s, tsh)
+         #puts @redis.smembers(@agency_name+"_trans_route_shapes_"+route_id.to_s)
+      end
+     
       
       
-     puts temp_stops.length   
-     return temp_stops
+     return transfer_shapes
   end 
-  
+
 
   
 end #end of class def
@@ -303,7 +326,6 @@ OptionParser.new do |opts|
   
   opts.banner = "Usage: aggregator.rb [options]"
   opts.on("-a", "--agency", "transit agency") do |a|
-    #puts "agency: "+a.to_s
     options[:agency] = a
   end
 
@@ -341,19 +363,7 @@ ARGV.each do |argv|
   puts "Total Number of Routes for "+argv+": "+routes_cnt.to_s
   
   
-  
-############################################################################## 
-    # generate transfer routes for each stop (atomized)
-    puts
-    puts "Generating Transfers Graph into Redis for Agency: "+argv
-    routes_cnt = 0
-    routes.each do |r|
-      agg_transfers = agg.transfers(r)
-      puts "Stop Routes: "+ r+" STOPS LEN "+agg_transfers.length.to_s
-      routes_cnt += 1
-    end
-   
-  
+
   
 ############################################################################## 
   puts
@@ -405,6 +415,23 @@ ARGV.each do |argv|
     
   end
 ############################################################################## 
+
+
+  
+############################################################################## 
+    # generate transfer routes for each stop (atomized)
+    puts
+    puts "Generating Transfers Graph into Redis for Agency: "+argv
+    routes_cnt = 0
+    routes.each do |r|
+      agg_transfers = agg.transfers(r)
+      puts "Stop Routes: "+ r+" STOPS LEN "+agg_transfers.length.to_s
+      
+      
+      routes_cnt += 1
+    end
+   
+  
 
   
 end

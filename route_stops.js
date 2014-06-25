@@ -17,10 +17,15 @@ var schedules =  new Array();
 
 var my_transfers_arr = new Array();
 var transfers =  new Array();
+var my_trans_route_arr = new Array();
+var trans_route_maps =  new Array();
+var trans_shape_keys =  new Array();
+
+var transfer_markers = new Array();
+var my_trans_markers = new Array();
 
 realbus = new Array();
 get_realbus = new Array();
-
 
 //STOPS
 exports.setStops = function(route_id, agency_name) {
@@ -32,8 +37,7 @@ exports.setStops = function(route_id, agency_name) {
 	var i = 0;	
 
     client.smembers(agency_name+'_stops_to_route_'+route_id, function(err,stop_ids) {
-	
-	//console.log(agency_name+'_stops_to_route_'+route_id+' '+stop_ids+' '+i);
+
 	
 	   if (err) {
           
@@ -44,9 +48,7 @@ exports.setStops = function(route_id, agency_name) {
 			  i++;
 			  for(var i = 0, len = stop_ids.length; i < len; i++) {  
 		  	      var k = 0;
-	
-				  
-				  //"Intercity_Transit:stop_82"
+
 		  		client.hgetall(agency_name+':stop_'+stop_ids[i], function(err, results) {
 			
 		  		   if (err) {
@@ -59,20 +61,14 @@ exports.setStops = function(route_id, agency_name) {
 		  				 stops.push(my_arr);
 				 
 		  				 if(k == stop_ids.length-1){
-		  					 //console.log(stops);
+
 		  					 return stops;
 		  				 } 
 
 		  		     }
 		  			  k++;
 		  		});
-				
-				
-				
-				
-				  
-				  
-		  		
+	
 	     }
 	  }
 	});	
@@ -106,7 +102,6 @@ exports.setRouteMap = function(route_id, agency_name) {
 			
 			  var rs_length = rs_len;
 
-		  	console.log("rs length 2: "+rs_length);
 		  	for(var c = 0; c < rs_length; c++ ){
 				
 		  	    client.lindex(agency_name+':route_shapes_'+route_id, c, function(err,route_map_ids) {
@@ -138,30 +133,17 @@ exports.setRouteMap = function(route_id, agency_name) {
 				 
 		  			  				 if(k == route_map_ids.length-1){
 							 
-		  			  					 //console.log(route_maps);
 		  			  					 return route_maps;
 		  			  				 } 
 
 		  			  		     }
 		  			  			  k++;
 		  			  		});
-				  
-				  
-		  		
-	
-		
+
 		  		  }
 		  		});	
-		
-		
-		
-		  	}
-			  
-			  
-			
-			  
-			  
-			  
+
+		  	}  
 			  
 		  }
 	});
@@ -245,12 +227,16 @@ exports.setSchedules = function(route_id, agency_name) {
 };
 
 
+
+
 exports.getSchedules = function(route_id, agency_name) {
 	this.setSchedules(route_id, agency_name);
 	
 	return schedules;
 
 };
+
+
 
 
 exports.setRealBus = function(route_short_name){	
@@ -296,6 +282,8 @@ exports.setRealBus = function(route_short_name){
 	
 };
 
+
+
 exports.getRealBus = function(route_short_name) {
 	
 	this.setRealBus(route_short_name);
@@ -315,16 +303,13 @@ exports.setTransfers = function(route_id, agency_name) {
     }
 	//TODO iterate through stops here
 	
-	
-	
     client.smembers(agency_name+'_stops_to_route_'+route_id, function(err,stop_ids) {
 
 	   if (err) {
-          
-		   //nothing here because your a poor fucking dweeb loser that has been abused and intimidated your whole life by straights and now suffers from depression, PTSD, mild traumatic brain injury, and massive social anxiety that keeps getting left by the people you love for straight fat ugly chicks or rich older fat ugly gay dudes that have money and power and nothing else. 
+           // through sickness and health!
+		   //error checking here 
 
 	      } else {
-			  //console.log(stop_ids);
 			  i++;
 			  for(var i = 0, len = stop_ids.length; i < len; i++) {  
 		  	      var k = 0;
@@ -340,13 +325,15 @@ exports.setTransfers = function(route_id, agency_name) {
 							data_arr['stop_id'] = my_stop_id;
 							data_arr['transfer'] = my_transfer;
 	 		  				transfers.push(data_arr);
-							
-							
+							//console.log(my_stop_id + " "+ my_transfer);
+					
 						}
 						
-						
  		  				 if(k == stop_ids.length-1){
- 		  					 console.log(transfers);
+ 							 //exports.setTransferRouteMap(my_transfer, agency_name);
+							 //var trans_map = new Array();
+							 //trans_map = exports.setTransferRouteMap(my_transfer, agency_name);
+							 //console.log("trans map len: "+trans_map.length);
  		  					 return transfers;
  		  				 } 
 			  	    }
@@ -357,34 +344,6 @@ exports.setTransfers = function(route_id, agency_name) {
 		 
 	  }
 	});	
-	
-	
-	
-	
-	
-
-	/*
-    client.smembers(agency_name+'_transfers_to_stop_'+stop_id, function(err,route_ids) {
-	
-
-	
-	   if (err) {
-          
-	  		my_arr += [{"stop_id":"404: error, no data"}];
-
-	      } else {
-			  
-			  console.log("route_ids: "+route_ids);
-	  }
-	});	
-	*/
-	
-	
-	
-	
-	
-	
-	
 
 };
 
@@ -397,5 +356,76 @@ exports.getTransfers = function(route_id, agency_name) {
 	return transfers;
 
 };
+
+
+
+
+//STOPS
+exports.setTransferMarkers = function(route_id, agency_name) {
+	
+    if(transfer_markers.length >= 1){
+    	 transfer_markers.length = 0;
+    }
+
+	var i = 0;
+	
+		
+    //_trans_route_shapes_
+    client.smembers(agency_name+'_trans_route_shapes_'+route_id, function(err,trans_ids) {
+		
+		console.log(trans_ids);
+		/*
+	   if (err) {
+          
+	  		my_arr += [{"trans_id":"404: error, no data"}];
+
+	      } else {
+			  
+			  i++;
+			  for(var i = 0, len = trans_ids.length; i < len; i++) {  
+		  	      var k = 0;
+
+		  		client.hgetall(agency_name+':stop_'+stop_ids[i], function(err, results) {
+			
+		  		   if (err) {
+		          
+		  		  		my_arr += [{"agency_id":"404: error, no data", "agency_url":"sorry, temporary error"}];
+
+		  		      } else {
+				  
+		  				 my_arr = results;
+		  				 transfer_markers.push(my_arr);
+				 
+		  				 if(k == stop_ids.length-1){
+
+		  					 return stops;
+							 
+		  				 } 
+
+		  		     }
+		  			  k++;
+		  		});
+	     }
+	  } //else 
+		
+		*/
+		
+	});	
+
+};
+
+
+
+
+exports.getTransferMarkers = function(route_id, agency_name) {
+	this.setTransferMarkers(route_id, agency_name);
+	
+	return transfer_markers;
+
+};
+
+
+
+
 
 

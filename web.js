@@ -122,6 +122,7 @@ app.get('/route_stops/:agency_name/:route_id/:route_short_name/:route_long_name'
 	route_map:routeStopsEngine.getRouteMap(route_id, agency_name), 
 	transfers:routeStopsEngine.getTransfers(route_id, agency_name), 
 	//realbus: routeStopsEngine.getRealBus(route_short_name),
+	transfer_markers:routeStopsEngine.getTransferMarkers(route_id, agency_name),
 	schedules:routeStopsEngine.getSchedules(route_id, agency_name) }); 
 
 });
