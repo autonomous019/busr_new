@@ -36,6 +36,7 @@ class Aggregator
   def system_map_size()  
 
       return @system_map_size
+      
   end 
   
   
@@ -61,11 +62,10 @@ class Aggregator
       temp_stops = temp_stops.uniq
 
       temp_stops.each do |ts|
-        #puts ts
         @redis.SADD(@agency_name+"_stops_to_route_"+route_id, ts.to_s)
       end
-       
-     return temp_stops
+ 
+      return temp_stops
   end 
   
   
@@ -249,7 +249,7 @@ class Aggregator
        shape_id = c['shape_id'].to_s       
        shape_pt_sequence = c['shape_pt_sequence'].to_s
 
-       @redis.rpush @agency_name+":system_coords", c['shape_id'].to_s+" "+c['shape_pt_sequence'].to_s
+       @redis.rpush @agency_name+":system_coords", c['shape_id'].to_s+" "+c['shape_pt_sequence'].to_s #redis list
        #@redis.zadd(@agency_name+":system_coords_sorted_set", 1, shape_id+" "+shape_pt_sequence)
        @system_map_size += 1
       end
@@ -307,7 +307,17 @@ class Aggregator
       transfer_shapes.each do |tsh|
         #tsh is a hash of shapes info
          @redis.SADD(@agency_name+"_trans_route_shapes_"+route_id.to_s, tsh)
-         #puts @redis.smembers(@agency_name+"_trans_route_shapes_"+route_id.to_s)
+         header = "var trans_route_shapes =  "
+         wr_str = @redis.smembers(@agency_name+"_trans_route_shapes_"+route_id.to_s)
+         footer = " ;
+         
+         exports.getTransRoutesShapes = function() {
+         	return routes;
+         }
+         
+         "
+         file_writer("../cache/"+@agency_name+"_trans_route_shapes_"+route_id.to_s, wr_str, header, footer)
+         
       end
      
       
@@ -315,7 +325,18 @@ class Aggregator
      return transfer_shapes
   end 
 
-
+  def file_writer(file_name, text, header, footer)
+    text = header.to_s + text.to_s + footer.to_s
+    begin
+       file = File.open(file_name,"w")
+       file.write(text) 
+    rescue IOError => e
+       #some error occur, dir not writable etc.
+    ensure
+       file.close unless file == nil
+    end
+      
+  end
   
 end #end of class def
 
@@ -354,16 +375,42 @@ ARGV.each do |argv|
   # generate stops for routes
   puts
   puts "Generating Stops Graph into Redis for Agency: "+argv
+  system_stops = Array.new
   routes_cnt = 0
+  data_arr = Hash.new
+  
   routes.each do |r|
+    
     agg_stops = agg.stops(r)
     puts "Route: "+ r+" STOPS LEN "+agg_stops.length.to_s
+    
+    agg_stops.each do |as|
+      puts as
+      data_arr["stop"] = as.to_s
+ 
+    end
+    system_stops.push(data_arr)
     routes_cnt += 1
   end
+  puts system_stops
+  system_stops = system_stops.uniq
+  header = "var "+argv.to_s+"_stops =  "
+  wr_str = system_stops.to_s
+  
+  footer = " ;
+  
+  exports.get"+argv+"Stops = function() {
+  	return routes;
+  }
+  
+  "
+  
+  agg.file_writer("../cache/"+argv+"_stops.js", wr_str, header, footer)
+  
   puts "Total Number of Routes for "+argv+": "+routes_cnt.to_s
   
   
-
+  exit
   
 ############################################################################## 
   puts

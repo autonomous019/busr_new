@@ -128,6 +128,16 @@ app.get('/route_stops/:agency_name/:route_id/:route_short_name/:route_long_name'
 });
 
 
+//new system map
+app.get('/system_map/:agency_name', function(req, res) {
+	var agency_name = req.params.agency_name;
+	var stops_data = require('./cache/'+agency_name+'_stops.js');
+	
+	//var maps = stops_data.getMap(agency_name);
+	res.render('System Map',{agency_name:agency_name, stops:stops_data});
+});
+
+
 
 
 //system wide route map 

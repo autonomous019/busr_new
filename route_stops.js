@@ -105,7 +105,6 @@ exports.setRouteMap = function(route_id, agency_name) {
 		  	for(var c = 0; c < rs_length; c++ ){
 				
 		  	    client.lindex(agency_name+':route_shapes_'+route_id, c, function(err,route_map_ids) {
-	
 		
 		  		   if (err) {
           
@@ -362,55 +361,16 @@ exports.getTransfers = function(route_id, agency_name) {
 
 //STOPS
 exports.setTransferMarkers = function(route_id, agency_name) {
-	
+	console.log("something: "+exports.getTransfers(route_id, agency_name));
     if(transfer_markers.length >= 1){
     	 transfer_markers.length = 0;
     }
 
 	var i = 0;
-	
+	//pass in route_ids as array then iterate 
 		
     //_trans_route_shapes_
-    client.smembers(agency_name+'_trans_route_shapes_'+route_id, function(err,trans_ids) {
-		
-		console.log(trans_ids);
-		/*
-	   if (err) {
-          
-	  		my_arr += [{"trans_id":"404: error, no data"}];
 
-	      } else {
-			  
-			  i++;
-			  for(var i = 0, len = trans_ids.length; i < len; i++) {  
-		  	      var k = 0;
-
-		  		client.hgetall(agency_name+':stop_'+stop_ids[i], function(err, results) {
-			
-		  		   if (err) {
-		          
-		  		  		my_arr += [{"agency_id":"404: error, no data", "agency_url":"sorry, temporary error"}];
-
-		  		      } else {
-				  
-		  				 my_arr = results;
-		  				 transfer_markers.push(my_arr);
-				 
-		  				 if(k == stop_ids.length-1){
-
-		  					 return stops;
-							 
-		  				 } 
-
-		  		     }
-		  			  k++;
-		  		});
-	     }
-	  } //else 
-		
-		*/
-		
-	});	
 
 };
 
