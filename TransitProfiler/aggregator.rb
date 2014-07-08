@@ -377,25 +377,26 @@ ARGV.each do |argv|
   puts "Generating Stops Graph into Redis for Agency: "+argv
   system_stops = Array.new
   routes_cnt = 0
-  data_arr = Hash.new
+  data_arr = Hash.new {|h,k| h[k]=[]}
   
   routes.each do |r|
     
     agg_stops = agg.stops(r)
     puts "Route: "+ r+" STOPS LEN "+agg_stops.length.to_s
-    
+    cnt = 0
     agg_stops.each do |as|
       puts as
-      data_arr["stop"] = as.to_s
- 
+      data_arr["stops"] << as.to_s
+      #system_stops.push(data_arr)
+      cnt += 1
     end
-    system_stops.push(data_arr)
+    
     routes_cnt += 1
   end
-  puts system_stops
-  system_stops = system_stops.uniq
+  puts data_arr
+  data_arr
   header = "var "+argv.to_s+"_stops =  "
-  wr_str = system_stops.to_s
+  wr_str = data_arr.to_s
   
   footer = " ;
   
